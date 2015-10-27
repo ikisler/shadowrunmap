@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+		<head>
+				<meta charset="utf-8">
+				<meta name="viewport" content="width=device-width,initial-scale=1">
+				<link rel="stylesheet" href="css/bootstrap.min.css">
+				<link rel="stylesheet" href="css/style.css">
+				<link rel="stylesheet" href="css/responsive.css">
+				<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+				<script src="js/bootstrap.js"></script>
+				<script src="js/picturefill.min.js"></script>
+				
+				<title></title>
+		</head>
+		<body>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhZW3pJBKP9ToFfTH9_jxVN-V3fA9d3R4"></script>
+<script>
+/*** Google Maps Function and Highlighted Areas ***/
+
+function initialize() {
+	var mapOptions = {
+		zoom: 9,
+		center: new google.maps.LatLng(48.05, -121.700556), //47.973333, -122.200556
+		mapTypeId: google.maps.MapTypeId.ROADMAP //TERRAIN
+	};
+
+	var map = new google.maps.Map(document.getElementById('map-canvas'),
+		 mapOptions);
+
+	// Define the LatLng coordinates for the polygon's path.
+	var zip98177 = [
+		{lat:47.777798,lng:-122.395234},
+		{lat:47.778213,lng:-122.353706},
+		{lat:47.701366,lng:-122.357842},
+		{lat:47.701366,lng:-122.393034},
+		{lat:47.777798,lng:-122.395234}
+	];
+
+	var zip98155 = [
+			{lat:47.777798,lng:-122.329799},
+			{lat:47.777798,lng:-122.3265},
+			{lat:47.777248,lng:-122.287459},
+			{lat:47.777248,lng:-122.271513},
+			{lat:47.758003,lng:-122.261615},
+			{lat:47.732709,lng:-122.28361},
+			{lat:47.734358,lng:-122.328699},
+			{lat:47.777798,lng:-122.329799}
+	];
+
+	var zip98028 = [
+			{lat: 47.758003, lng: -122.261615},
+			{lat: 47.777248, lng: -122.271513},
+			{lat: 47.777248, lng: -122.266564},
+			{lat: 47.776698, lng: -122.233022},
+			{lat: 47.731609, lng: -122.245119},
+			{lat: 47.734358, lng: -122.264914},
+			{lat: 47.758003, lng: -122.261615},
+	];
+
+	var zip98274 = [
+			{lat: 48.297425, lng: -122.226423},
+			{lat: 48.297425, lng: -122.303955},
+			{lat: 48.339821, lng: -122.334824},
+			{lat: 48.421146, lng: -122.334198},
+			{lat: 48.383205, lng: -122.191232},
+			{lat: 48.297975, lng: -121.935542},
+			{lat: 48.297425, lng: -122.226423},
+	];
+
+	var zip98282 = [
+			{lat: 48.249587, lng: -122.397433},
+			{lat: 48.225942, lng: -122.386436},
+			{lat: 48.175904, lng: -122.478814},
+			{lat: 48.065232, lng: -122.345854},
+			{lat: 48.044933, lng: -122.358392},
+			{lat: 48.113850, lng: -122.510499},
+			{lat: 48.184152, lng: -122.5391},
+			{lat: 48.240000, lng: -122.55},
+			{lat: 48.266000, lng: -122.53},
+			{lat:48.274511, lng: -122.446747},
+			{lat: 48.249587, lng: -122.397433}
+	];
+
+	var county = [{lat:47.77711, lng:-121.74611},{lat:47.77722, lng:-121.8511},{lat:47.77674, lng:-121.90553},{lat:47.77619, lng:-121.96755},{lat:47.77543, lng:-122.02348},{lat:47.77566, lng:-122.08747},{lat:47.77567, lng:-122.10261},{lat:47.77622, lng:-122.15708},{lat:47.7762, lng:-122.1736},{lat:47.77662, lng:-122.22318},{lat:47.77695, lng:-122.24193},{lat:47.77703, lng:-122.26457},{lat:47.77722, lng:-122.28758},{lat:47.77742, lng:-122.29812},{lat:47.77754, lng:-122.30955},{lat:47.77762, lng:-122.31649},{lat:47.77768, lng:-122.3266},{lat:47.77779, lng:-122.34622},{lat:47.77799, lng:-122.36213},{lat:47.77787, lng:-122.37004},{lat:47.77802, lng:-122.39334},{lat:47.77812, lng:-122.43804},{lat:47.78562, lng:-122.44224},{lat:47.79322, lng:-122.44151},{lat:47.79855, lng:-122.44099},{lat:47.80312, lng:-122.44054},{lat:47.8116, lng:-122.43687},{lat:47.81742, lng:-122.43435},{lat:47.82761, lng:-122.42952},{lat:47.85062, lng:-122.41205},{lat:47.87628, lng:-122.37625},{lat:47.89967, lng:-122.3532},{lat:47.92132, lng:-122.34325},{lat:47.95394, lng:-122.32968},{lat:47.97689, lng:-122.33212},{lat:47.99881, lng:-122.34554},{lat:48.0224, lng:-122.35065},{lat:48.04302, lng:-122.34044},{lat:48.059, lng:-122.3413},{lat:48.08031, lng:-122.35029},{lat:48.09646, lng:-122.36302},{lat:48.11206, lng:-122.38066},{lat:48.13759, lng:-122.40317},{lat:48.15725, lng:-122.41484},{lat:48.17383, lng:-122.41798},{lat:48.201, lng:-122.41379},{lat:48.21743, lng:-122.40189},{lat:48.22981, lng:-122.3947},{lat:48.23556, lng:-122.39271},{lat:48.23884, lng:-122.39325},{lat:48.23975, lng:-122.39452},{lat:48.2429, lng:-122.39966},{lat:48.24633, lng:-122.40105},{lat:48.2505, lng:-122.40477},{lat:48.27526, lng:-122.42509},{lat:48.29759, lng:-122.45833},{lat:48.29759, lng:-122.44715},{lat:48.29765, lng:-122.36942},{lat:48.29763, lng:-122.36143},{lat:48.29753, lng:-122.33338},{lat:48.29755, lng:-122.31794},{lat:48.29764, lng:-122.29197},{lat:48.29747, lng:-122.24838},{lat:48.29733, lng:-122.20496},{lat:48.29726, lng:-122.18132},{lat:48.29777, lng:-122.14028},{lat:48.29788, lng:-122.09745},{lat:48.29755, lng:-122.00557},{lat:48.29768, lng:-121.94162},{lat:48.29792, lng:-121.86626},{lat:48.29801, lng:-121.83592},{lat:48.29825, lng:-121.75455},{lat:48.29837, lng:-121.69158},{lat:48.29863, lng:-121.66135},{lat:48.29853, lng:-121.63299},{lat:48.2974, lng:-121.5756},{lat:48.29642, lng:-121.53379},{lat:48.29593, lng:-121.44339},{lat:48.29593, lng:-121.41082},{lat:48.29598, lng:-121.25444},{lat:48.2958, lng:-121.06195},{lat:48.29555, lng:-121.00176},{lat:48.29555, lng:-121.00141},{lat:48.29541, lng:-121.00121},{lat:48.25015, lng:-120.98141},{lat:48.20995, lng:-120.96091},{lat:48.18285, lng:-120.91741},{lat:48.15525, lng:-120.94051},{lat:48.11884, lng:-120.95271},{lat:48.09834, lng:-120.97971},{lat:48.07824, lng:-121.02921},{lat:48.06314, lng:-121.08521},{lat:48.05806, lng:-121.10477},{lat:48.0076, lng:-121.12094},{lat:47.98623, lng:-121.13231},{lat:47.98173, lng:-121.14511},{lat:47.96593, lng:-121.15271},{lat:47.95123, lng:-121.16301},{lat:47.93453, lng:-121.17191},{lat:47.91993, lng:-121.17821},{lat:47.90733, lng:-121.17441},{lat:47.89323, lng:-121.17631},{lat:47.88083, lng:-121.16751},{lat:47.87663, lng:-121.15791},{lat:47.85583, lng:-121.14861},{lat:47.84333, lng:-121.13491},{lat:47.83263, lng:-121.09561},{lat:47.80873, lng:-121.08521},{lat:47.78003, lng:-121.11911},{lat:47.77993, lng:-121.11901},{lat:47.77953, lng:-121.27945},{lat:47.78005, lng:-121.38001},{lat:47.77775, lng:-121.49976},{lat:47.77679, lng:-121.61046},{lat:47.77711, lng:-121.74463}];
+
+	var locationBGColors = [
+		{location: 'Everett', color: 'blue'},
+		{location: 'Snohomish', color: 'green'},
+		{location: 'Bellevue', color: 'ltblue'},
+		{location: 'Redmond', color: 'red'},
+		{location: 'Renton', color: 'orange'},
+		{location: 'Auburn', color: 'yellow'},
+		{location: 'Tacoma', color: 'dkgreen'},
+		{location: 'Downtown', color: 'purple'},
+		{location: 'Council Island', color: 'gray'},
+		{location: 'Outremer', color: 'dkblue'}
+	];
+
+	var nextShape;
+
+	var arrPolygon = [zip98282, zip98274, zip98028, zip98155, zip98177, county];
+
+	for(var i=0; i< arrPolygon.length; i++) {
+		nextShape = new  google.maps.Polygon({
+				paths: arrPolygon[i],
+				strokeColor: '#FF0000',
+				strokeOpacity: 0, //0.8,
+				strokeWeight: 2,
+				fillColor: locationBGColors[i].color,
+				fillOpacity: 0.35
+		});
+
+		nextShape.setMap(map);
+
+	}
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+
+
+				<header>
+					<div class="logo">
+						<div class="logo-front">Peter's</div>
+						<div class="logo-back">Shadowrun Map</div>
+					</div>
+				</header>
+				
+				<main>
+						<map>
+							<div class="row-fluid" style="height:500px;">
+					        	<div id="map-canvas" style="height:500px;"></div>
+							</div>
+						</map>
+				</main>
+
+				<footer>
+						<a href="http://ikisler.github.io/portfolio" target="_blank">Designed by Isabeau Kisler</a>
+				</footer>
+		</body>
+</html>
