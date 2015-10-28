@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html>
 		<head>
-				<meta charset="utf-8">
-				<meta name="viewport" content="width=device-width,initial-scale=1">
-				<link rel="stylesheet" href="css/bootstrap.min.css">
-				<link rel="stylesheet" href="css/style.css">
-				<link rel="stylesheet" href="css/responsive.css">
-				<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-				<script src="js/bootstrap.js"></script>
-				<script src="js/picturefill.min.js"></script>
-				
-				<title></title>
+			<meta charset=utf-8>
+			<meta name=viewport content=width=device-width,initial-scale=1>
+			<link rel=stylesheet href=css/bootstrap.min.css>
+			<link rel=stylesheet href=css/style.css>
+			<link rel=stylesheet href=css/responsive.css>
+			<script src=http://code.jquery.com/jquery-1.9.1.min.js></script>
+			<script src=js/bootstrap.js></script>
+			<script src=js/picturefill.min.js></script>
+
+			<script src=https://cdn.firebase.com/js/client/2.3.1/firebase.js></script>
+			
+			<title></title>
 		</head>
 		<body>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhZW3pJBKP9ToFfTH9_jxVN-V3fA9d3R4"></script>
+<script src=https://maps.googleapis.com/maps/api/js?key=AIzaSyDhZW3pJBKP9ToFfTH9_jxVN-V3fA9d3R4></script>
 <script>
 /*** Google Maps Function and Highlighted Areas ***/
 
@@ -96,9 +98,12 @@ function initialize() {
 		{location: 'Outremer', color: 'dkblue'}
 	];
 
+	var everett = [{lat: 48.02621297545797, lng: -122.332763671875}, {lat: 48.017946316196635, lng: -122.20916748046875}, {lat: 48.01473114624478, lng: -122.18719482421875}, {lat: 48.00646264573117, lng: -122.17620849609375}, {lat: 47.9954359160952, lng: -122.17483520507812}, {lat: 47.98164918953037, lng: -122.18238830566406}, {lat: 47.979351043707766, lng: -122.1624755859375}, {lat: 47.97751245338962, lng: -122.13775634765625}, {lat: 47.96326115834283, lng: -122.12333679199219}, {lat: 47.95314495015594, lng: -122.10342407226562}, {lat: 47.95222519664455, lng: -122.09999084472656}, {lat: 47.93520680379448, lng: -122.09861755371094}, {lat: 47.92876595076567, lng: -122.10479736328125}, {lat: 47.916342040161176, lng: -122.10823059082031}, {lat: 47.878131332845186, lng: -122.10960388183594}, {lat: 47.88135501149263, lng: -122.12677001953125}, {lat: 47.89148526708789, lng: -122.14462280273438}, {lat: 47.88181552063899, lng: -122.15835571289062}, {lat: 47.865695264743216, lng: -122.17758178710938}, {lat: 47.857402894658236, lng: -122.200927734375}, {lat: 47.84910919811478, lng: -122.21397399902344}, {lat: 47.85003078545827, lng: -122.27439880371094}, {lat: 47.84035330156615, lng: -122.2723388671875}, {lat: 47.83159592699296, lng: -122.26203918457031}, {lat: 47.82099291702753, lng: -122.27851867675781}, {lat: 47.82053186746053, lng: -122.36297607421875}, {lat: 47.8173044058442, lng: -122.36778259277344}, {lat: 47.816843323520764, lng: -122.37327575683594}, {lat: 47.81084888070653, lng: -122.37876892089844}, {lat: 47.816843323520764, lng: -122.38632202148438}, {lat: 47.94900593043644, lng: -122.32589721679688}, {lat: 48.006922041650924, lng: -122.34169006347656}];
+
 	var nextShape;
 
 	var arrPolygon = [zip98282, zip98274, zip98028, zip98155, zip98177, county];
+	var arrPolygon = [everett];
 
 	for(var i=0; i< arrPolygon.length; i++) {
 		nextShape = new  google.maps.Polygon({
@@ -113,29 +118,102 @@ function initialize() {
 		nextShape.setMap(map);
 
 	}
+
+var arrLatLng = [];
+
+	google.maps.event.addListener(map, 'click', function(event) {
+
+		var obj = '{lat: ' + event.latLng.lat() + ', lng: ' + event.latLng.lng() + '},';
+		arrLatLng.push(obj);
+		console.log(arrLatLng);
+
+	    //console.log(event.latLng.lat() + event.latLng.lng());
+
+	});
 }
 
+
 google.maps.event.addDomListener(window, 'load', initialize);
+
+
+var myFirebaseRef = new Firebase('https://blistering-torch-7640.firebaseio.com/');
+
+myFirebaseRef.child(zones).on(value, function(snapshot) {
+	console.log(snapshot.val());
+	console.log(snapshot.val().Everett);
+});
+
+document.addEventListener(DOMContentLoaded, function(event) {
+var locationBGColors = [
+		{location: 'Everett', color: 'blue'},
+		{location: 'Snohomish', color: 'green'},
+		{location: 'Bellevue', color: 'ltblue'},
+		{location: 'Redmond', color: 'red'},
+		{location: 'Renton', color: 'orange'},
+		{location: 'Auburn', color: 'yellow'},
+		{location: 'Tacoma', color: 'dkgreen'},
+		{location: 'Downtown', color: 'purple'},
+		{location: 'Council Island', color: 'gray'},
+		{location: 'Outremer', color: 'dkblue'}
+	];
+
+var element = document.getElementsByTagName('main');
+var table = document.createElement('div');
+table.className += 'key';
+var tempContainerDiv;
+var tempColorDiv;
+var tempNameDiv;
+var tempName;
+
+for(var i=0; i<locationBGColors.length; i++) {
+	// Create a DIV to hold the location
+	tempDiv = document.createElement('div');
+	tempDiv.className += 'key-location';
+
+	// Create a box for the color
+	tempColorDiv = document.createElement('div');
+	tempColorDiv.className += 'key-location-color';
+	tempColorDiv.style.backgroundColor = locationBGColors[i].color;
+
+	// Create a box with text
+	tempNameDiv = document.createElement('span');
+	tempNameDiv.className += 'key-location-name';
+	tempName = document.createTextNode(locationBGColors[i].location);
+	tempNameDiv.appendChild(tempName);
+
+	// Append everything to the table
+	tempDiv.appendChild(tempColorDiv);
+	tempDiv.appendChild(tempNameDiv);
+	table.appendChild(tempDiv);
+}
+
+// Append everything to the main element
+element[0].appendChild(table);
+//console.log(element[0]);
+
+});
+
 </script>
 
 
 				<header>
-					<div class="logo">
-						<div class="logo-front">Peter's</div>
-						<div class="logo-back">Shadowrun Map</div>
+					<div class=logo>
+						<div class=logo-front>Peter's</div>
+						<div class=logo-back>Shadowrun Map</div>
 					</div>
 				</header>
 				
 				<main>
 						<map>
-							<div class="row-fluid" style="height:500px;">
-					        	<div id="map-canvas" style="height:500px;"></div>
+							<div class=row-fluid style=height:500px;>
+					        	<div id=map-canvas style=height:500px;></div>
 							</div>
 						</map>
+
 				</main>
 
 				<footer>
-						<a href="http://ikisler.github.io/portfolio" target="_blank">Designed by Isabeau Kisler</a>
+						<a href=http://ikisler.github.io/portfolio target=_blank>Designed by Isabeau Kisler</a>
 				</footer>
 		</body>
 </html>
