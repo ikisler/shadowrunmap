@@ -28,15 +28,63 @@ myFirebaseRef.child('zones').on('value', function(snapshot) {
 	// Testing
 	//console.log(snapshot.val());
 	locations = snapshot.val();
-	//console.log(locationCoords);
-	//console.log(locationCoords.auburn.boundaries);
-	//console.log(snapshot.val().Everett);
+
+	var locationsObjs = [];
+
+	for(var index in locations) {
+    	var attr = locations[index];
+    	//console.log(attr);
+    	locationsObjs.push(attr);
+	}
+
+	console.log(locationsObjs);
+
+	// Get the main element
+	var element = document.getElementsByTagName('main');
+	// Create a div to hold the map key, and give it a class
+	var table = document.createElement('div');
+	table.className += 'key';
+
+	// Temp variables to use while creating each key
+	var tempContainerDiv;
+	var tempColorDiv;
+	var tempNameDiv;
+	var tempName;
+
+	// For each zone, create elements to hold the color and name
+	for(var i=0; i<locationsObjs.length; i++) {
+		// Create a DIV to hold the location
+		tempDiv = document.createElement('div');
+		tempDiv.className += 'key-location';
+
+		// Create a box for the color
+		tempColorDiv = document.createElement('div');
+		tempColorDiv.className += 'key-location-color';
+		tempColorDiv.style.backgroundColor = locationsObjs[i].color;
+
+		// Create a box with text
+		tempNameDiv = document.createElement('span');
+		tempNameDiv.className += 'key-location-name';
+		tempName = document.createTextNode(locationsObjs[i].name);
+		tempNameDiv.appendChild(tempName);
+
+		// Append everything to the table
+		tempDiv.appendChild(tempColorDiv);
+		tempDiv.appendChild(tempNameDiv);
+		table.appendChild(tempDiv);
+	}
+
+	// Append everything to the main element
+	element[0].appendChild(table);
+
 });
 
+// Maybe use something like this for error handling?
+/*
 setTimeout(function(){
-	console.log(locationCoords.auburn.boundaries);
+	console.log(locations.auburn.boundaries);
 }, 5000);
-
+*/
 
 
 /*** Google Maps Function and Highlighted Areas ***/
@@ -101,54 +149,6 @@ google.maps.event.addDomListener(window, 'load', initialize);
 //document.addEventListener(window.onload, function(event) { //DOMContentLoaded
 window.onload = function() {
 
-var locationBGColors = [
-		{location: 'Everett', color: '#0000FF'},
-		{location: 'Snohomish', color: '#009900'},
-		{location: 'Bellevue', color: '#09a'},
-		{location: 'Redmond', color: '#FF0000'},
-		{location: 'Renton', color: '#FF9900'},
-		{location: 'Auburn', color: '#FFFF00'},
-		{location: 'Tacoma', color: '#336600'},
-		{location: 'Downtown', color: '#9900CC'},
-		{location: 'Council Island', color: '#555'},
-		{location: 'Outremer', color: '#003399'},
-		{location: 'puyallup', color: '#FF0000'},
-		{location: 'ftLewis', color: '#0000FF'}
-	];
-
-var element = document.getElementsByTagName('main');
-var table = document.createElement('div');
-table.className += 'key';
-var tempContainerDiv;
-var tempColorDiv;
-var tempNameDiv;
-var tempName;
-
-for(var i=0; i<locationBGColors.length; i++) {
-	// Create a DIV to hold the location
-	tempDiv = document.createElement('div');
-	tempDiv.className += 'key-location';
-
-	// Create a box for the color
-	tempColorDiv = document.createElement('div');
-	tempColorDiv.className += 'key-location-color';
-	tempColorDiv.style.backgroundColor = locationBGColors[i].color;
-
-	// Create a box with text
-	tempNameDiv = document.createElement('span');
-	tempNameDiv.className += 'key-location-name';
-	tempName = document.createTextNode(locationBGColors[i].location);
-	tempNameDiv.appendChild(tempName);
-
-	// Append everything to the table
-	tempDiv.appendChild(tempColorDiv);
-	tempDiv.appendChild(tempNameDiv);
-	table.appendChild(tempDiv);
-}
-
-// Append everything to the main element
-element[0].appendChild(table);
-//console.log(element[0]);
 
 };
 
@@ -156,23 +156,23 @@ element[0].appendChild(table);
 
 
 				<header>
-					<div class=logo>
-						<div class=logo-front>Peter's</div>
-						<div class=logo-back>Shadowrun Map</div>
+					<div class="logo">
+						<div class="logo-front">Peter's</div>
+						<div class="logo-back>"Shadowrun Map</div>
 					</div>
 				</header>
 				
 				<main>
 						<map>
-							<div class=row-fluid style=height:500px;>
-					        	<div id=map-canvas style=height:500px;></div>
+							<div class="row-fluid" style="height:500px;">
+					        	<div id="map-canvas" style="height:500px;"></div>
 							</div>
 						</map>
 
 				</main>
 
 				<footer>
-						<a href=http://ikisler.github.io/portfolio target=_blank>Designed by Isabeau Kisler</a>
+						<a href="http://ikisler.github.io/portfolio" target="_blank">Designed by Isabeau Kisler</a>
 				</footer>
 		</body>
 </html>
