@@ -37,8 +37,13 @@ myFirebaseRef.child('zones').on('value', function(snapshot) {
     	locationsObjs.push(attr);
 	}
 
-	console.log(locationsObjs);
+	console.log(locationsObjs[0].boundaries);
 
+	console.log(fixBoundaries(locationsObjs[0].boundaries));
+
+
+
+	/***** The Map Key *****/
 	// Get the main element
 	var element = document.getElementsByTagName('main');
 	// Create a div to hold the map key, and give it a class
@@ -78,6 +83,17 @@ myFirebaseRef.child('zones').on('value', function(snapshot) {
 	element[0].appendChild(table);
 
 });
+
+function fixBoundaries(boundaries) {
+	var tempBoundaries = boundaries.split(',. ');
+	var fixedBoundaries = [];
+
+	for(var i=0; i<tempBoundaries.length; i++) {
+		fixedBoundaries.push(JSON.parse(tempBoundaries[i]));
+	}
+
+	return fixedBoundaries;
+}
 
 // Maybe use something like this for error handling?
 /*
@@ -136,7 +152,7 @@ var arrLatLng = [];
 
 	google.maps.event.addListener(map, 'click', function(event) {
 
-		var obj = '{lat: ' + event.latLng.lat() + ', lng: ' + event.latLng.lng() + '},';
+		var obj = '{"lat": ' + event.latLng.lat() + ', "lng": ' + event.latLng.lng() + '},.';
 		arrLatLng.push(obj);
 		console.log(arrLatLng);
 	});
