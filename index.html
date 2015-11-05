@@ -15,175 +15,14 @@
 			<title></title>
 		</head>
 		<body>
-<script src=https://maps.googleapis.com/maps/api/js?key=AIzaSyDhZW3pJBKP9ToFfTH9_jxVN-V3fA9d3R4></script>
-<script>
-// Create a reference to the Firebase containing zone information.
-var myFirebaseRef = new Firebase('https://blistering-torch-7640.firebaseio.com/');
-
-// Container for location information
-var locations;
-
-// When the Firebase is loaded, do all the things
-myFirebaseRef.child('zones').on('value', function(snapshot) {
-	// Testing
-	//console.log(snapshot.val());
-	locations = snapshot.val();
-
-	var locationsObjs = [];
-	var locationBoundaries = [];
-
-	for(var index in locations) {
-    	var attr = locations[index];
-    	//console.log(attr);
-    	locationsObjs.push(attr);
-	}
-
-	for(var i=0; i<locationsObjs.length; i++) {
-		locationBoundaries.push(fixBoundaries(locationsObjs[i].boundaries));
-	}
-
-	//console.log(locationsObjs[0].boundaries);
-
-	//console.log(fixBoundaries(locationsObjs[0].boundaries));
-
-
-/*** Google Maps Function and Highlighted Areas ***/
-
-function initialize() {
-	var mapOptions = {
-		zoom: 9,
-		center: new google.maps.LatLng(48.05, -121.700556), //47.973333, -122.200556
-		mapTypeId: google.maps.MapTypeId.ROADMAP //TERRAIN
-	};
-
-	var map = new google.maps.Map(document.getElementById('map-canvas'),
-		 mapOptions);
-
-	var locationBGColors = [
-		{location: 'Everett', color: '#0000FF'},
-		{location: 'Snohomish', color: '#009900'},
-		{location: 'Bellevue', color: '#09a'},
-		{location: 'Redmond', color: '#FF0000'},
-		{location: 'Renton', color: '#FF9900'},
-		{location: 'Auburn', color: '#FFFF00'},
-		{location: 'Tacoma', color: '#336600'},
-		{location: 'Downtown', color: '#9900CC'},
-		{location: 'Council Island', color: '#555'},
-		{location: 'Outremer', color: '#003399'},
-		{location: 'Puyallup', color: '#FF0000'},
-		{location: 'Ft Lewis', color: '#0000FF'}
-	];
-
-	var nextShape;
-
-	var arrPolygon = locationBoundaries; //[everett, snohomish, bellevue, redmond, renton, auburn, tacoma, downtownSeattle, councilIsland, outremer, puyallup, ftLewis];
-
-	for(var i=0; i< arrPolygon.length; i++) {
-		nextShape = new  google.maps.Polygon({
-				paths: arrPolygon[i],
-				strokeColor: '#FF0000',
-				strokeOpacity: 0, //0.8,
-				strokeWeight: 2,
-				fillColor: locationBGColors[i].color,
-				fillOpacity: 0.35
-		});
-
-		nextShape.setMap(map);
-
-	}
-
-var arrLatLng = [];
-
-	google.maps.event.addListener(map, 'click', function(event) {
-
-		var obj = '{"lat": ' + event.latLng.lat() + ', "lng": ' + event.latLng.lng() + '},.';
-		arrLatLng.push(obj);
-		console.log(arrLatLng);
-	});
-}
-
-
-//google.maps.event.addDomListener(window, 'load', initialize);
-initialize();
-
-
-
-	/***** The Map Key *****/
-	// Get the main element
-	var element = document.getElementsByTagName('main');
-	// Create a div to hold the map key, and give it a class
-	var table = document.createElement('div');
-	table.className += 'key';
-
-	// Temp variables to use while creating each key
-	var tempContainerDiv;
-	var tempColorDiv;
-	var tempNameDiv;
-	var tempName;
-
-	// For each zone, create elements to hold the color and name
-	for(var i=0; i<locationsObjs.length; i++) {
-		// Create a DIV to hold the location
-		tempDiv = document.createElement('div');
-		tempDiv.className += 'key-location';
-
-		// Create a box for the color
-		tempColorDiv = document.createElement('div');
-		tempColorDiv.className += 'key-location-color';
-		tempColorDiv.style.backgroundColor = locationsObjs[i].color;
-
-		// Create a box with text
-		tempNameDiv = document.createElement('span');
-		tempNameDiv.className += 'key-location-name';
-		tempName = document.createTextNode(locationsObjs[i].name);
-		tempNameDiv.appendChild(tempName);
-
-		// Append everything to the table
-		tempDiv.appendChild(tempColorDiv);
-		tempDiv.appendChild(tempNameDiv);
-		table.appendChild(tempDiv);
-	}
-
-	// Append everything to the main element
-	element[0].appendChild(table);
-
-});
-
-function fixBoundaries(boundaries) {
-	var tempBoundaries = boundaries.split(',. ');
-	var fixedBoundaries = [];
-
-	for(var i=0; i<tempBoundaries.length; i++) {
-		fixedBoundaries.push(JSON.parse(tempBoundaries[i]));
-	}
-
-	return fixedBoundaries;
-}
-
-// Maybe use something like this for error handling?
-/*
-setTimeout(function(){
-	console.log(locations.auburn.boundaries);
-}, 5000);
-*/
-
-
-
-
-
-//document.addEventListener(window.onload, function(event) { //DOMContentLoaded
-window.onload = function() {
-
-
-};
-
-</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhZW3pJBKP9ToFfTH9_jxVN-V3fA9d3R4"></script>
+<script src="js/app.js"></script>
 
 
 				<header>
 					<div class="logo">
 						<div class="logo-front">Peter's</div>
-						<div class="logo-back>"Shadowrun Map</div>
+						<div class="logo-back">Shadowrun Map</div>
 					</div>
 				</header>
 				
@@ -197,7 +36,9 @@ window.onload = function() {
 				</main>
 
 				<footer>
-						<a href="http://ikisler.github.io/portfolio" target="_blank">Designed by Isabeau Kisler</a>
+						<a href="http://ikisler.github.io/portfolio" target="_blank">Created by Isabeau Kisler</a>
+						<input class="new-area-boundaries-check" type="checkbox">
+						<div class="new-area-boundaries-text"></div>
 				</footer>
 		</body>
 </html>
