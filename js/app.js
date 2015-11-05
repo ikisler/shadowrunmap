@@ -1,3 +1,19 @@
+/***** Error Handling *****/
+// If the browser can't cannot to the Firebase in five seconds, create and show an error message
+var cannotConnect = setTimeout(function(){
+	var main = document.getElementsByTagName('main')[0];
+	var errorMessage = document.createElement('div');
+	errorMessage.className = 'error-message';
+	var message = document.createTextNode('An error has occured.  Please check your internet connection or try again later.');
+	errorMessage.appendChild(message);
+	main.appendChild(errorMessage);
+
+	// Set the map height to 0 so the error message is at the top of the page
+	document.getElementById('map-canvas').style.height = 0;
+
+}, 5000);
+
+/***** Setting up the Firebase *****/
 // Create a reference to the Firebase containing zone information.
 var myFirebaseRef = new Firebase('https://blistering-torch-7640.firebaseio.com/');
 
@@ -6,6 +22,9 @@ myFirebaseRef.child('zones').on('value', function(snapshot) {
 	var rawData = snapshot.val(); // Raw data from the Firebase
 	var locationsObjs = [];	// Holds the location objects
 	var locationBoundaries = []; // Holds the corrected location boundaries
+
+	// Clear the timeout for the error message
+	clearTimeout(cannotConnect);
 
 	// Move the objects into an array
 	for(var index in rawData) {
@@ -23,7 +42,6 @@ myFirebaseRef.child('zones').on('value', function(snapshot) {
 
 	// Create the map key
 	createMapKey(locationsObjs);
-
 });
 
 /***** Fix the format of the boundaries that come from the Firebase *****/
@@ -40,13 +58,11 @@ function fixBoundaries(boundaries) {
 	return fixedBoundaries;
 }
 
-//document.addEventListener(window.onload, function(event) { //DOMContentLoaded
-window.onload = function() {
-
-
-};
-
 /***** Google Maps Function and Highlighted Areas *****/
+
+// Global variable to hold the current path on the map, so it can be cleared later
+var path;
+
 function createMap(boundaries, locations) {
 	var mapOptions = {
 		zoom: 9,
@@ -64,10 +80,10 @@ function createMap(boundaries, locations) {
 		polygon = new  google.maps.Polygon({
 				paths: boundaries[i],
 				strokeColor: '#000000',
-				strokeOpacity: 0, //0.8,
+				strokeOpacity: 0,
 				strokeWeight: 2,
 				fillColor: locations[i].color,
-				fillOpacity: 0.40 //0.35
+				fillOpacity: 0.40
 		});
 
 		// Add the polygon to the map
@@ -76,23 +92,51 @@ function createMap(boundaries, locations) {
 	}
 
 	// This code is used for creating new polygon areas
-	//var arrLatLng = [];
+	// Variable to hold a polyline for illustrating new boundaries
+	var poly = new google.maps.Polyline({
+		strokeColor: '#000000',
+		strokeOpacity: 1.0,
+		strokeWeight: 3
+	});
+	poly.setMap(map);
+
+	// The textbox that holds the new boundary text
 	var newBoundariesText = document.getElementsByClassName('new-area-boundaries-text')[0];
 	
 	google.maps.event.addListener(map, 'click', function(event) {
-		var temp;
-
 		//  If the new-area-boundaries checkbox is checked, add new boundary locations to the new-area-boundaries-text div
 		if(document.getElementsByClassName('new-area-boundaries-check')[0].checked) {
+			path = poly.getPath();
 
+			// Append a new coord, and it will appear on the map
+			path.push(event.latLng);
+
+			// Append the new boundary value to the textbox
 			var obj = '{"lat": ' + event.latLng.lat() + ', "lng": ' + event.latLng.lng() + '},.';
-			//arrLatLng.push(obj);
-			//console.log(arrLatLng);
-			temp = document.createTextNode(obj);
-			newBoundariesText.appendChild(temp);
+			newBoundariesText.value += obj;
 		}
 	});
 }
+
+window.onload = function() {
+	var newBoundariesCheck = document.getElementsByClassName('new-area-boundaries-check')[0];
+	var newBoundariesText = document.getElementsByClassName('new-area-boundaries-text')[0];
+
+	newBoundariesCheck.onclick = function() {
+		// If the checkbox isn't checked, then remove the boundaries textbox from the page,
+		// clear the path on the polyline, and reset the value of the boundaries textbox
+		if(!newBoundariesCheck.checked) {
+			newBoundariesText.className += ' invisible';
+
+			path.clear();
+			newBoundariesText.value = '';
+		} else {
+			// Otherwise, show the new boundaries textbox
+			newBoundariesText.className = newBoundariesText.className.replace(' invisible', '');
+		}
+	}
+}
+
 
 /***** The Map Key *****/
 function createMapKey(locations) {

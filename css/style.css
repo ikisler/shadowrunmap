@@ -4,6 +4,7 @@ body {
 	color: #fff;
 }
 
+/*** Header and Logo ***/
 header {
 	//width: 95%;
 	padding: 10px;
@@ -39,6 +40,7 @@ header {
 	color: #fff;
 }
 
+/***** Map Key *****/
 .key {
 	width: 100%;
 }
@@ -60,4 +62,45 @@ header {
 	height: 100%;
 	margin: auto 0;
 	padding: 0 15px;
+}
+
+/***** Add New Boundaries *****/
+footer {
+	width: 100%;
+}
+
+.invisible {
+	display: none;
+}
+
+.attribution,
+.add-new-boundaries {
+	display: inline-block;
+	//border: 2px solid red;
+}
+
+.attribution {
+	width: 200px;
+	float: right;
+}
+
+.add-new-boundaries {
+	width: 50%;
+}
+
+.new-area-boundaries-check,
+span {
+	vertical-align: top;
+
+}
+
+.new-area-boundaries-text {
+	width: 80%;
+	height: 150px;
+}
+
+/***** Error Message *****/
+.error-message {
+	text-align: center;
+	padding: 20px;
 }
