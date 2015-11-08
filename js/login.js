@@ -25,9 +25,6 @@ function displayInfo() {
 		var locationsObjs = [];	// Holds the location objects
 		var locationBoundaries = []; // Holds the corrected location boundaries
 
-		// Clear the timeout for the error message
-		clearTimeout(cannotConnect);
-
 		// Move the objects into an array
 		for(var index in rawData) {
 			var attr = rawData[index];
