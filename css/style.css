@@ -113,3 +113,22 @@ span {
 	text-align: center;
 	padding: 20px;
 }
+
+/***** Add Page *****/
+.info-container {
+	width: 100%
+}
+
+.location-item {
+	border: 2px solid black;
+	width: 100%;
+	margin: 10px 0 0 0;
+}
+
+.color {
+	width: 50%
+}
+
+.name {
+	width: 50%
+}
