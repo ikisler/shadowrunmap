@@ -31,11 +31,6 @@ function displayInfo() {
 			locationsObjs.push(attr);
 		}
 
-		// Move the correction boundaries into an array
-		for(var i=0; i<locationsObjs.length; i++) {
-			locationBoundaries.push(fixBoundaries(locationsObjs[i].boundaries));
-		}
-
 		var infoContainer = document.createElement('div');
 		infoContainer.className = 'info-container';
 
