@@ -4,12 +4,19 @@ body {
 	color: #fff;
 }
 
+a {
+	color: #000;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #aef;
+}
+
 /*** Header and Logo ***/
 header {
-	//width: 95%;
 	padding: 10px;
 	background-color: #000;
-	//border-radius: 100px;
 	border-top-left-radius: 60px;
 	border-bottom-left-radius: 60px;
 
@@ -114,21 +121,91 @@ span {
 	padding: 20px;
 }
 
-/***** Add Page *****/
+/***** Add Information Page *****/
+button {
+	background-color: #ccc;
+	color: #000;
+	border-radius: 5px;
+	border: solid 2px #777;
+	font-weight: bold;
+}
+
+button:hover {
+	background-color: #aef;
+	border: 2px solid black;
+}
+
+.login-container {
+	width: 90%;
+	text-align: center;
+}
+
+#login {
+	width: 200px;
+	height: 75px;
+	margin: 20px auto;
+	font-size: 1.2em;
+}
+
+/***** Add New Information *****/
+.add-item-container {
+	width: 100%;
+}
+
+.add-item-box {
+	display: inline-block;
+	width: 30%;
+}
+
+.add-item-name,
+.add-item-color,
+.add-item-boundaries {
+	width: 95%;
+	height: 1.5em;
+	padding: 1px 5px;
+	background-color: #aaa;
+	border: none;
+	border-bottom: 2px solid #aef;
+}
+
+.add-item-name:hover,
+.add-item-color:hover,
+.add-item-boundaries:hover {
+	background-color: #aef;
+}
+
+.add-item-name:focus,
+.add-item-color:focus,
+.add-item-boundaries:focus {
+	border-bottom: 2px solid black;
+	background-color: #aef;
+	outline: none;
+}
+
+#add {
+	vertical-align: top;
+	padding: 3px 8px;
+	border-radius: 3px;
+}
+
+.add-item-description {
+	font-size: 1em;
+	text-align: center;
+}
+
+/***** Display Existing Information *****/
+.name,
+.color,
+.boundaries {
+	width: 28%;
+}
+
 .info-container {
-	width: 100%
+	width: 100%;
 }
 
 .location-item {
 	border: 2px solid black;
 	width: 100%;
 	margin: 10px 0 0 0;
-}
-
-.color {
-	width: 50%
-}
-
-.name {
-	width: 50%
 }
