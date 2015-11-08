@@ -94,9 +94,18 @@ span {
 
 }
 
+.new-area-boundaries-text,
+.new-area-boundaries-copy {
+	margin-right: 0;
+}
+
 .new-area-boundaries-text {
-	width: 80%;
+	width: 100%;
 	height: 150px;
+}
+
+.new-area-boundaries-copy {
+	padding: 10px;
 }
 
 /***** Error Message *****/

@@ -118,25 +118,32 @@ function createMap(boundaries, locations) {
 	});
 }
 
+// This code is used for creating new polygon areas
 window.onload = function() {
 	var newBoundariesCheck = document.getElementsByClassName('new-area-boundaries-check')[0];
 	var newBoundariesText = document.getElementsByClassName('new-area-boundaries-text')[0];
+	var newBoundariesCopyButton = document.getElementsByClassName('new-area-boundaries-copy')[0];
 
 	newBoundariesCheck.onclick = function() {
 		// If the checkbox isn't checked, then remove the boundaries textbox from the page,
 		// clear the path on the polyline, and reset the value of the boundaries textbox
 		if(!newBoundariesCheck.checked) {
 			newBoundariesText.className += ' invisible';
+			newBoundariesCopyButton.className += ' invisible';
 
 			path.clear();
 			newBoundariesText.value = '';
 		} else {
 			// Otherwise, show the new boundaries textbox
 			newBoundariesText.className = newBoundariesText.className.replace(' invisible', '');
+			newBoundariesCopyButton.className = newBoundariesCopyButton.className.replace(' invisible', '');
 		}
 	}
 }
 
+function copyBoundaries() {
+	var newBoundariesText = document.getElementsByClassName('new-area-boundaries-text')[0].value;
+}
 
 /***** The Map Key *****/
 function createMapKey(locations) {
