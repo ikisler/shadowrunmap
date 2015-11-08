@@ -9,7 +9,7 @@ function login() {
 		} else {
 			console.log("Authenticated successfully with payload:", authData);
 
-
+			displayInfo();
 		}
 	});
 }
