@@ -7,7 +7,7 @@
 		<link rel="stylesheet" href="css/responsive.css">
 		<script src="https://cdn.firebase.com/js/client/2.3.1/firebase.js"></script>
 		
-		<title>Peter's Shadowrun Map - Add</title>
+		<title>Add New Locations - Peter's Shadowrun Map</title>
 	</head>
 	<body>
 		<header>
@@ -18,7 +18,24 @@
 		</header>
 		
 		<main>
-			<button id="login">Login with Google</button>
+			<div class="login-container">
+				<button id="login">Login with Google</button>
+			</div>
+			<div class="add-item-container">
+				<div class="add-item-box">
+					<input class="add-item-name" type="text">
+					<div class="add-item-description">Name</div>
+				</div>
+				<div class="add-item-box">
+					<input class="add-item-color" type="text">
+					<div class="add-item-description">Color</div>
+				</div>
+				<div class="add-item-box">
+					<input class="add-item-boundaries" type="text">
+					<div class="add-item-description">Boundaries</div>
+				</div>
+				<button id="add">Add</button>
+			</div>
 
 		</main>
 

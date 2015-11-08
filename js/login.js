@@ -9,7 +9,8 @@ function login() {
 		} else {
 			console.log("Authenticated successfully with payload:", authData);
 
-				// When the Firebase is loaded, do all the things
+			// If successful:
+			// Display information
 			ref.child('zones').on('value', function(snapshot) {
 				var rawData = snapshot.val(); // Raw data from the Firebase
 				var locationsObjs = [];	// Holds the location objects
@@ -23,6 +24,9 @@ function login() {
 
 				displayInfo(locationsObjs);
 			});
+
+			// Hide the login button
+			loginButton.className += ' invisible';
 		}
 	});
 }
@@ -38,6 +42,10 @@ function displayInfo(locationsObjs) {
 	var infoContainer = document.createElement('div');
 	infoContainer.className = 'info-container';
 
+	var currentInfo = document.createElement('h2');
+	var infoHeading = document.createTextNode('Current Information');
+	currentInfo.appendChild(infoHeading);
+
 	var tempDiv;
 	var tempColorDiv;
 	var tempColor;
@@ -50,21 +58,28 @@ function displayInfo(locationsObjs) {
 		tempDiv = document.createElement('div');
 		tempDiv.className = 'location-item';
 
-		tempColorDiv = document.createElement('div');
+		tempColorDiv = document.createElement('span');
 		tempColor = document.createTextNode(locationsObjs[i].color);
 		tempColorDiv.appendChild(tempColor);
 		tempColorDiv.className = 'color';
 
-		tempNameDiv = document.createElement('div');
+		tempNameDiv = document.createElement('span');
 		tempName = document.createTextNode(locationsObjs[i].name);
 		tempNameDiv.appendChild(tempName);
 		tempNameDiv.className = 'name';
 
+		tempBoundariesDiv = document.createElement('span');
+		tempBoundaries = document.createTextNode(locationsObjs[i].boundaries);
+		tempBoundariesDiv.appendChild(tempBoundaries);
+		tempBoundariesDiv.className = 'boundaries';
+
+		tempDiv.appendChild(tempNameDiv);
 		tempDiv.appendChild(tempColorDiv);
-		tempDiv.appendChild(tempName);
+		tempDiv.appendChild(tempBoundariesDiv);
 
 		infoContainer.appendChild(tempDiv);
 	}
 
+	main.appendChild(currentInfo);
 	main.appendChild(infoContainer);
 }
