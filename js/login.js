@@ -1,4 +1,8 @@
 var loginButton = document.getElementById('login');
+var addButton = document.getElementById('add');
+
+loginButton.addEventListener('click', login);
+addButton.addEventListener('click', add);
 
 var ref = new Firebase("https://blistering-torch-7640.firebaseio.com");
 
@@ -31,8 +35,6 @@ function login() {
 	});
 }
 
-loginButton.addEventListener('click', login);
-
 // My UID: google:115312161939888854395
 
 function displayInfo(locationsObjs) {
@@ -58,17 +60,17 @@ function displayInfo(locationsObjs) {
 		tempDiv = document.createElement('div');
 		tempDiv.className = 'location-item';
 
-		tempColorDiv = document.createElement('span');
+		tempColorDiv = document.createElement('div');
 		tempColor = document.createTextNode(locationsObjs[i].color);
 		tempColorDiv.appendChild(tempColor);
 		tempColorDiv.className = 'color';
 
-		tempNameDiv = document.createElement('span');
+		tempNameDiv = document.createElement('div');
 		tempName = document.createTextNode(locationsObjs[i].name);
 		tempNameDiv.appendChild(tempName);
 		tempNameDiv.className = 'name';
 
-		tempBoundariesDiv = document.createElement('span');
+		tempBoundariesDiv = document.createElement('div');
 		tempBoundaries = document.createTextNode(locationsObjs[i].boundaries);
 		tempBoundariesDiv.appendChild(tempBoundaries);
 		tempBoundariesDiv.className = 'boundaries';
@@ -82,4 +84,8 @@ function displayInfo(locationsObjs) {
 
 	main.appendChild(currentInfo);
 	main.appendChild(infoContainer);
+}
+
+function add() {
+	// write code here to add another zone to firebase/zones
 }

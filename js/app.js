@@ -17,7 +17,7 @@ var cannotConnect = setTimeout(function(){
 // Create a reference to the Firebase containing zone information.
 var myFirebaseRef = new Firebase('https://blistering-torch-7640.firebaseio.com/');
 
-// When the Firebase is loaded, do all the things
+// When the Firebase for the Zones is loaded, do all the things
 myFirebaseRef.child('zones').on('value', function(snapshot) {
 	var rawData = snapshot.val(); // Raw data from the Firebase
 	var locationsObjs = [];	// Holds the location objects
@@ -44,6 +44,24 @@ myFirebaseRef.child('zones').on('value', function(snapshot) {
 	createMapKey(locationsObjs);
 });
 
+// When the Firebase for the Markers is loaded, add them to the map
+myFirebaseRef.child('markers').on('value', function(snapshot) {
+	var rawData = snapshot.val(); // Raw data from the Firebase
+	var marker;
+	var latlng;
+
+	for(var i=0; i<rawData.length; i++) {
+		latlng = {lat: rawData[i].lat, lng: rawData[i].lng};
+
+		marker = new google.maps.Marker({
+			position: latlng,
+			map: map,
+			title: rawData[i].name
+		});
+	}
+
+});
+
 /***** Fix the format of the boundaries that come from the Firebase *****/
 function fixBoundaries(boundaries) {
 	var tempBoundaries = boundaries.split(',. '); // Boundaries as strings
@@ -62,6 +80,8 @@ function fixBoundaries(boundaries) {
 
 // Global variable to hold the current path on the map, so it can be cleared later
 var path;
+// Global variable to hold the map object, so it can be accessed for markers
+var map;
 
 function createMap(boundaries, locations) {
 	var mapOptions = {
@@ -71,7 +91,7 @@ function createMap(boundaries, locations) {
 	};
 
 	// Get the map element
-	var map = new google.maps.Map(document.getElementById('map-canvas'),
+	map = new google.maps.Map(document.getElementById('map-canvas'),
 		 mapOptions);
 
 	// Create the polygon overlay using the passed boundary and location information

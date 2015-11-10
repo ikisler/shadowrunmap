@@ -150,6 +150,7 @@ button:hover {
 /***** Add New Information *****/
 .add-item-container {
 	width: 100%;
+	margin-top: 20px;
 }
 
 .add-item-box {
@@ -177,7 +178,7 @@ button:hover {
 .add-item-name:focus,
 .add-item-color:focus,
 .add-item-boundaries:focus {
-	border-bottom: 2px solid black;
+	border-bottom: 2px solid #000;
 	background-color: #aef;
 	outline: none;
 }
@@ -197,15 +198,31 @@ button:hover {
 .name,
 .color,
 .boundaries {
-	width: 28%;
+	display: inline-block;
+	height: 100px;
+}
+
+.name,
+.color {
+	width: 30%;
+	text-align: center;
+}
+
+.boundaries {
+	width: 30%;
+	overflow: scroll;
 }
 
 .info-container {
 	width: 100%;
+	padding: 10px 0;
+	margin: 30px 0;
+	background-color: #777;
 }
 
 .location-item {
-	border: 2px solid black;
-	width: 100%;
-	margin: 10px 0 0 0;
+	width: 98%;
+	border-bottom: 2px solid black;
+	margin: 30px auto 0 auto;
+	padding-bottom: 30px;
 }
