@@ -6,6 +6,7 @@ addButton.addEventListener('click', add);
 
 var ref = new Firebase("https://blistering-torch-7640.firebaseio.com");
 
+/***** Login Users *****/
 function login() {
 	ref.authWithOAuthPopup("google", function(error, authData) {
 		if (error) {
@@ -37,6 +38,7 @@ function login() {
 
 // My UID: google:115312161939888854395
 
+/***** Display Current Zones Information *****/
 function displayInfo(locationsObjs) {
 	// Get the main element
 	var main = document.getElementsByTagName('main')[0];
@@ -86,6 +88,61 @@ function displayInfo(locationsObjs) {
 	main.appendChild(infoContainer);
 }
 
+/***** Add New Zone to Firebase *****/
 function add() {
-	// write code here to add another zone to firebase/zones
+	var newName = document.getElementsByClassName('add-item-name')[0].value;
+	var newColor = document.getElementsByClassName('add-item-color')[0].value;
+	var newBoundaries = document.getElementsByClassName('add-item-boundaries')[0].value;
+	var valid = true;
+
+	// Validation
+	// Remove any old errors
+	removeOldErrors();
+
+	// Name can be anything, I don't care
+	if(newName.length === 0) {
+		showErrorMessage('Enter name');
+		valid = false;
+	}
+
+	// Hex Colors
+	if(newColor.search(/#([a-f]|[A-F]|[0-9]){3}(([a-f]|[A-F]|[0-9]){3})?\b/) < 0) {
+		showErrorMessage('Enter a hex value, in this format: #000000 or #000');
+		valid = false;
+
+	}
+	// Boundaries
+	if(newBoundaries.search(/{"lat": -?([0-9]){1,}.([0-9]){1,}, "lng": -?([0-9]){1,}.([0-9]){1,}},./) < 0) {
+		showErrorMessage('Enter valid boundaries in the correct format');
+		valid = false;
+	}
+	// If anything is invalid, leave the function
+	if(!valid) {
+		return false;
+	}
+}
+
+/**** Display Error Message *****/
+function showErrorMessage(error) {
+	var errorMessageContainer = document.getElementsByClassName('error-message-container')[0];
+	errorMessageContainer.value = '';
+
+	var errorMessage = document.createElement('li');
+	errorMessage.className = 'error-message';
+	var message = document.createTextNode(error);
+
+	errorMessageContainer.className = errorMessageContainer.className.replace('invisible', '');
+
+	errorMessage.appendChild(message);
+	errorMessageContainer.appendChild(errorMessage);
+
+}
+
+/***** Remove Error Messages *****/
+function removeOldErrors() {
+	var errorMessageContainer = document.getElementsByClassName('error-message-container')[0];
+
+	while(errorMessageContainer.firstChild) {
+		errorMessageContainer.removeChild(errorMessageContainer.firstChild);
+	}
 }
