@@ -43,6 +43,13 @@ function displayInfo(locationsObjs) {
 	// Get the main element
 	var main = document.getElementsByTagName('main')[0];
 
+	// If the info container already exists, destroy it
+	// This is in case the Firebase is updated while someone is looking at it
+	var old = document.getElementsByClassName('info-container');
+	if(old.length > 0) {
+		main[0].removeChild(old[0]);
+	}
+
 	var infoContainer = document.createElement('div');
 	infoContainer.className = 'info-container';
 
@@ -95,7 +102,32 @@ function add() {
 	var newBoundaries = document.getElementsByClassName('add-item-boundaries')[0].value;
 	var valid = true;
 
+	var keyName = newName.toLowerCase().replace(' ','');
+
 	// Validation
+	if(!validate()) {
+		return false;
+	}
+
+	var zonesRef = ref.child('zones');
+
+	var newBoundary = zonesRef.push();
+	newBoundary.set({
+		keyName: {
+			'name': newName,
+			'color': newColor,
+			'boundaries': newBoundaries
+		}
+	});
+}
+
+/**** Validation *****/
+function validate() {
+	var newName = document.getElementsByClassName('add-item-name')[0].value;
+	var newColor = document.getElementsByClassName('add-item-color')[0].value;
+	var newBoundaries = document.getElementsByClassName('add-item-boundaries')[0].value;
+	var valid = true;
+
 	// Remove any old errors
 	removeOldErrors();
 
@@ -120,9 +152,9 @@ function add() {
 	if(!valid) {
 		return false;
 	}
+
 }
 
-/**** Display Error Message *****/
 function showErrorMessage(error) {
 	var errorMessageContainer = document.getElementsByClassName('error-message-container')[0];
 	errorMessageContainer.value = '';
