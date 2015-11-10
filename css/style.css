@@ -132,7 +132,11 @@ button {
 
 button:hover {
 	background-color: #aef;
-	border: 2px solid black;
+	border: 2px solid #000;
+}
+
+button:focus {
+	outline: none;
 }
 
 .login-container {
@@ -194,6 +198,16 @@ button:hover {
 	text-align: center;
 }
 
+/*** Add Item Error Messages ***/
+.error-message-container {
+	font-size: 1.1em;
+	list-style-type: none;
+}
+
+.error-message {
+	padding: 5px 0;
+}
+
 /***** Display Existing Information *****/
 .name,
 .color,
@@ -224,5 +238,5 @@ button:hover {
 	width: 98%;
 	border-bottom: 2px solid black;
 	margin: 30px auto 0 auto;
-	padding-bottom: 30px;
+	vertical-align: top;
 }
