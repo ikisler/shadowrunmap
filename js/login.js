@@ -10,9 +10,18 @@ var ref = new Firebase("https://blistering-torch-7640.firebaseio.com");
 function login() {
 	ref.authWithOAuthPopup("google", function(error, authData) {
 		if (error) {
-			console.log("Login Failed!", error);
+//			if (error.code === "TRANSPORT_UNAVAILABLE") {
+//				ref.authWithOAuthRedirect("google", function(error) {
+//					console.log("BING");
+//					console.log(authData);
+//				});
+//			} else {
+				console.log("Login Failed!", error);
+//			}
 		} else {
 			console.log("Authenticated successfully with payload:", authData);
+			console.log(authData.displayName);
+			console.log(authData.uid);
 
 			// If successful:
 			// Display information
@@ -36,6 +45,7 @@ function login() {
 	});
 }
 
+
 // My UID: google:115312161939888854395
 
 /***** Display Current Zones Information *****/
@@ -43,11 +53,11 @@ function displayInfo(locationsObjs) {
 	// Get the main element
 	var main = document.getElementsByTagName('main')[0];
 
-	// If the info container already exists, destroy it
+	// If the info container already exists on the page, destroy it
 	// This is in case the Firebase is updated while someone is looking at it
 	var old = document.getElementsByClassName('info-container');
 	if(old.length > 0) {
-		main[0].removeChild(old[0]);
+		main.removeChild(old[0]);
 	}
 
 	var infoContainer = document.createElement('div');
@@ -113,12 +123,12 @@ function add() {
 
 	var newBoundary = zonesRef.push();
 	newBoundary.set({
-		keyName: {
-			'name': newName,
-			'color': newColor,
-			'boundaries': newBoundaries
-		}
+		'name': newName,
+		'color': newColor,
+		'boundaries': newBoundaries
 	});
+
+	console.log('Added boundary, maybe?');
 }
 
 /**** Validation *****/
@@ -153,6 +163,7 @@ function validate() {
 		return false;
 	}
 
+	return true;
 }
 
 function showErrorMessage(error) {
