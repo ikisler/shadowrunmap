@@ -132,8 +132,12 @@ function createMap(boundaries, locations) {
 			path.push(event.latLng);
 
 			// Append the new boundary value to the textbox
-			var obj = '{"lat": ' + event.latLng.lat() + ', "lng": ' + event.latLng.lng() + '},.';
-			newBoundariesText.value += obj;
+			// Beginning line
+			if(newBoundariesText.value === '') {
+				newBoundariesText.value = '{"lat": ' + event.latLng.lat() + ', "lng": ' + event.latLng.lng() + '}';
+			} else {;
+				newBoundariesText.value += ',. {"lat": ' + event.latLng.lat() + ', "lng": ' + event.latLng.lng() + '}';
+			}
 		}
 	});
 }
