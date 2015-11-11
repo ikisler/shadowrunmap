@@ -71,7 +71,7 @@ function loginFirst() {
 function currentZonesToggle() {
 	// If the info-container exists, delete it.
 	// otherwise, display it.
-	if(!removeBoundaryInfo();) {
+	if(!removeBoundaryInfo()) {
 		displayBoundaryInfo();
 	}
 }
