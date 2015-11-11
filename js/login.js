@@ -56,7 +56,9 @@ function displayInfo(locationsObjs) {
 	// If the info container already exists on the page, destroy it
 	// This is in case the Firebase is updated while someone is looking at it
 	var old = document.getElementsByClassName('info-container');
+	var oldInfoHeading = document.getElementsByClassName('info-container-heading');
 	if(old.length > 0) {
+		main.removeChild(oldInfoHeading[0]);
 		main.removeChild(old[0]);
 	}
 
@@ -65,6 +67,7 @@ function displayInfo(locationsObjs) {
 
 	var currentInfo = document.createElement('h2');
 	var infoHeading = document.createTextNode('Current Information');
+	infoHeading.className = 'info-container-heading';
 	currentInfo.appendChild(infoHeading);
 
 	var tempDiv;
@@ -110,9 +113,6 @@ function add() {
 	var newName = document.getElementsByClassName('add-item-name')[0].value;
 	var newColor = document.getElementsByClassName('add-item-color')[0].value;
 	var newBoundaries = document.getElementsByClassName('add-item-boundaries')[0].value;
-	var valid = true;
-
-	var keyName = newName.toLowerCase().replace(' ','');
 
 	// Validation
 	if(!validate()) {
@@ -128,7 +128,9 @@ function add() {
 		'boundaries': newBoundaries
 	});
 
-	console.log('Added boundary, maybe?');
+	newName = '';
+	newColor = '';
+	newBoundaries = '';
 }
 
 /**** Validation *****/

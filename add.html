@@ -17,11 +17,7 @@
 			</div>
 		</header>
 		
-		<main>
-			<div class="login-container">
-				<button id="login">Login with Google</button>
-				<ul class="error-message-container invisible"></ul>
-			</div>
+		<main class="add-page-main">
 			<div class="add-item-container">
 				<div class="add-item-box">
 					<input class="add-item-name" type="text">
@@ -37,9 +33,18 @@
 				</div>
 				<button id="add">Add</button>
 			</div>
+			<ul class="error-message-container invisible"></ul>
 		</main>
 
-		<footer>
+		<aside>
+			<div class="login-container">
+				<button id="login">Login with Google</button>
+			</div>
+			<button id="current-zones">Current Zones</button>
+			<button id="current-markers">Current Markers</button>
+		</aside>
+
+		<footer class="add-page-footer">
 			<a class="attribution" href="http://ikisler.github.io/portfolio" target="_blank">Created by Isabeau Kisler</a>
 		</footer>
 		<script src="js/login.js"></script>
