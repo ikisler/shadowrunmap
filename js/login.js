@@ -1,10 +1,16 @@
 var loginButton = document.getElementById('login');
 var addButton = document.getElementById('add');
+var currentZonesButton = document.getElementById('current-zones');
+var currentMarkersButton = document.getElementById('current-markers');
 
 loginButton.addEventListener('click', login);
-addButton.addEventListener('click', add);
+addButton.addEventListener('click', loginFirst);
+currentZonesButton.addEventListener('click', loginFirst);
+currentMarkersButton.addEventListener('click', loginFirst);
 
 var ref = new Firebase("https://blistering-torch-7640.firebaseio.com");
+
+var locationsObjs;
 
 /***** Login Users *****/
 function login() {
@@ -27,8 +33,7 @@ function login() {
 			// Display information
 			ref.child('zones').on('value', function(snapshot) {
 				var rawData = snapshot.val(); // Raw data from the Firebase
-				var locationsObjs = [];	// Holds the location objects
-				var locationBoundaries = []; // Holds the corrected location boundaries
+				locationsObjs = [];	// Holds the location objects
 
 				// Move the objects into an array
 				for(var index in rawData) {
@@ -36,8 +41,17 @@ function login() {
 					locationsObjs.push(attr);
 				}
 
-				displayInfo(locationsObjs);
+				//displayBoundaryInfo(locationsObjs);
+
+				// Remove loginFirst messages
+				loginButton.removeEventListener('click', loginFirst);
+				addButton.removeEventListener('click', loginFirst);
+				currentZonesButton.removeEventListener('click', loginFirst);
+				currentMarkersButton.removeEventListener('click', loginFirst);
 			});
+
+			addButton.addEventListener('click', add);
+			currentZonesButton.addEventListener('click', displayBoundaryInfo(locationsObjs));
 
 			// Hide the login button
 			loginButton.className += ' invisible';
@@ -48,23 +62,49 @@ function login() {
 
 // My UID: google:115312161939888854395
 
+function loginFirst() {
+	showErrorMessage('Please log in first.');
+}
+
+// Toggles the display of the current zones.
+// After login, attached to the currentZonesButton
+function currentZonesToggle() {
+	// If the info-container exists, delete it.
+	// otherwise, display it.
+	if(!removeBoundaryInfo();) {
+		displayBoundaryInfo();
+	}
+}
+
+function removeBoundaryInfo() {
+	var old = document.getElementsByClassName('info-container');
+	var oldInfoHeading = document.getElementsByClassName('info-container-heading');
+	if(old.length > 0) {
+		main.removeChild(oldInfoHeading[0]);
+		main.removeChild(old[0]);
+		// Info-container was removed
+		return true;
+	} else {
+		// info-container didn't exist
+		return false;
+	}
+}
+
 /***** Display Current Zones Information *****/
-function displayInfo(locationsObjs) {
+function displayBoundaryInfo() {
 	// Get the main element
 	var main = document.getElementsByTagName('main')[0];
 
 	// If the info container already exists on the page, destroy it
 	// This is in case the Firebase is updated while someone is looking at it
-	var old = document.getElementsByClassName('info-container');
-	if(old.length > 0) {
-		main.removeChild(old[0]);
-	}
+	removeBoundaryInfo();
 
 	var infoContainer = document.createElement('div');
 	infoContainer.className = 'info-container';
 
 	var currentInfo = document.createElement('h2');
 	var infoHeading = document.createTextNode('Current Information');
+	infoHeading.className = 'info-container-heading';
 	currentInfo.appendChild(infoHeading);
 
 	var tempDiv;
@@ -110,9 +150,6 @@ function add() {
 	var newName = document.getElementsByClassName('add-item-name')[0].value;
 	var newColor = document.getElementsByClassName('add-item-color')[0].value;
 	var newBoundaries = document.getElementsByClassName('add-item-boundaries')[0].value;
-	var valid = true;
-
-	var keyName = newName.toLowerCase().replace(' ','');
 
 	// Validation
 	if(!validate()) {
@@ -128,7 +165,9 @@ function add() {
 		'boundaries': newBoundaries
 	});
 
-	console.log('Added boundary, maybe?');
+	newName = '';
+	newColor = '';
+	newBoundaries = '';
 }
 
 /**** Validation *****/
@@ -137,9 +176,6 @@ function validate() {
 	var newColor = document.getElementsByClassName('add-item-color')[0].value;
 	var newBoundaries = document.getElementsByClassName('add-item-boundaries')[0].value;
 	var valid = true;
-
-	// Remove any old errors
-	removeOldErrors();
 
 	// Name can be anything, I don't care
 	if(newName.length === 0) {
@@ -167,6 +203,9 @@ function validate() {
 }
 
 function showErrorMessage(error) {
+	// Remove any old errors
+	removeOldErrors();
+
 	var errorMessageContainer = document.getElementsByClassName('error-message-container')[0];
 	errorMessageContainer.value = '';
 

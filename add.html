@@ -17,12 +17,26 @@
 			</div>
 		</header>
 		
-		<main>
-			<div class="login-container">
-				<button id="login">Login with Google</button>
-				<ul class="error-message-container invisible"></ul>
+		<main class="add-page-main">
+			<ul class="error-message-container invisible"></ul>
+			<div class="add-item-container">
+				<h2>Add a New Zone</h2>
+				<div class="add-item-box">
+					<input class="add-item-name" type="text">
+					<div class="add-item-description">Name</div>
+				</div>
+				<div class="add-item-box">
+					<input class="add-item-color" type="text">
+					<div class="add-item-description">Color (Hex)</div>
+				</div>
+				<div class="add-item-box">
+					<input class="add-item-boundaries" type="text">
+					<div class="add-item-description">Boundaries</div>
+				</div>
+				<button id="add">Add</button>
 			</div>
 			<div class="add-item-container">
+				<h2>Add a New Zone</h2>
 				<div class="add-item-box">
 					<input class="add-item-name" type="text">
 					<div class="add-item-description">Name</div>
@@ -39,7 +53,15 @@
 			</div>
 		</main>
 
-		<footer>
+		<aside>
+			<div class="login-container">
+				<button id="login">Login with Google</button>
+			</div>
+			<button id="current-zones">Current Zones</button>
+			<button id="current-markers">Current Markers</button>
+		</aside>
+
+		<footer class="add-page-footer">
 			<a class="attribution" href="http://ikisler.github.io/portfolio" target="_blank">Created by Isabeau Kisler</a>
 		</footer>
 		<script src="js/login.js"></script>
