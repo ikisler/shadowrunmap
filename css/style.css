@@ -2,6 +2,7 @@ body {
 	font-family: arial, sans-serif;
 	background-color: #aaa;
 	color: #fff;
+	height: 100%;
 }
 
 a {
@@ -49,7 +50,13 @@ header {
 
 /***** Map Key *****/
 .key {
-	width: 100%;
+	width: 15%;
+	min-width: 200px;
+	height: 100%;
+	max-height: 550px;
+	overflow: auto;
+	vertical-align: top;
+	float: right;
 }
 
 .key-location {
@@ -61,7 +68,7 @@ header {
 }
 
 .key-location-color {
-	width: 50px;
+	width: 30px;
 	height: 50px;
 }
 
@@ -71,9 +78,18 @@ header {
 	padding: 0 15px;
 }
 
+/***** Map *****/
+#map-canvas {
+	height: 600px;
+	width: 84%;
+	float: left;
+}
+
 /***** Add New Boundaries *****/
 footer {
-	width: 100%;
+	width: 15%;
+	min-width: 200px;
+	float: right;
 }
 
 .invisible {
@@ -83,26 +99,20 @@ footer {
 .attribution,
 .add-new-boundaries {
 	display: inline-block;
-	//border: 2px solid red;
 }
 
 .attribution {
 	width: 200px;
 	float: right;
-}
-
-.add-new-boundaries {
-	width: 50%;
+	margin: 10px 0 10px 0;
 }
 
 .new-area-boundaries-check,
 span {
 	vertical-align: top;
-
 }
 
-.new-area-boundaries-text,
-.new-area-boundaries-copy {
+.new-area-boundaries-text {
 	margin-right: 0;
 }
 
@@ -111,17 +121,22 @@ span {
 	height: 150px;
 }
 
-.new-area-boundaries-copy {
-	padding: 10px;
-}
-
-/***** Error Message *****/
-.error-message {
-	text-align: center;
-	padding: 20px;
-}
-
 /***** Add Information Page *****/
+aside {
+	float: right;
+	width: 15%;
+}
+
+.add-page-main {
+	float: left;
+	width: 83%;
+}
+
+.add-page-footer {
+	width: 100%;
+}
+
+/***** Buttons *****/
 button {
 	background-color: #ccc;
 	color: #000;
@@ -139,11 +154,6 @@ button:focus {
 	outline: none;
 }
 
-.login-container {
-	width: 90%;
-	text-align: center;
-}
-
 #login {
 	width: 200px;
 	height: 75px;
@@ -151,7 +161,26 @@ button:focus {
 	font-size: 1.2em;
 }
 
+.login-container {
+	width: 100%;
+	text-align: center;
+}
+
+#current-zones,
+#current-markers {
+	width: 100px;
+	height: 50px;
+	display: block;
+	margin: 0 auto 20px auto;
+}
+
 /***** Add New Information *****/
+#add {
+	vertical-align: top;
+	padding: 3px 8px;
+	border-radius: 3px;
+}
+
 .add-item-container {
 	width: 100%;
 	margin-top: 20px;
@@ -160,6 +189,11 @@ button:focus {
 .add-item-box {
 	display: inline-block;
 	width: 30%;
+}
+
+.add-item-description {
+	font-size: 1em;
+	text-align: center;
 }
 
 .add-item-name,
@@ -187,25 +221,16 @@ button:focus {
 	outline: none;
 }
 
-#add {
-	vertical-align: top;
-	padding: 3px 8px;
-	border-radius: 3px;
-}
-
-.add-item-description {
-	font-size: 1em;
-	text-align: center;
-}
-
 /*** Add Item Error Messages ***/
 .error-message-container {
 	font-size: 1.1em;
 	list-style-type: none;
+	padding: 0;
 }
 
 .error-message {
 	padding: 5px 0;
+	text-align: center;
 }
 
 /***** Display Existing Information *****/
