@@ -50,8 +50,19 @@ function login() {
 				currentMarkersButton.removeEventListener('click', loginFirst);
 			});
 
-			addButton.addEventListener('click', add);
-			currentZonesButton.addEventListener('click', displayBoundaryInfo(locationsObjs));
+			// Disable the buttons until the Firebase is loaded
+			addButton.disabled = true;
+			currentZonesButton.disabled = true;
+			currentMarkersButton.disabled = true;
+			
+			setTimeout(function(){
+				addButton.disabled = false;
+				currentZonesButton.disabled = false;
+				currentMarkersButton.disabled = false;
+
+				addButton.addEventListener('click', add);
+				currentZonesButton.addEventListener('click', displayBoundaryInfo(locationsObjs));
+			}, 2000);
 
 			// Hide the login button
 			loginButton.className += ' invisible';
