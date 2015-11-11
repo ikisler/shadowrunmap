@@ -26,10 +26,12 @@ function login() {
 //			}
 		} else {
 			console.log("Authenticated successfully with payload:", authData);
-			console.log(authData.displayName);
 			console.log(authData.uid);
 
 			// If successful:
+			// Remove any error messages
+			removeOldErrors();
+
 			// Display information
 			ref.child('zones').on('value', function(snapshot) {
 				var rawData = snapshot.val(); // Raw data from the Firebase
@@ -88,8 +90,10 @@ function currentZonesToggle() {
 }
 
 function removeBoundaryInfo() {
+	var main = document.getElementsByTagName('main')[0];
 	var old = document.getElementsByClassName('info-container');
 	var oldInfoHeading = document.getElementsByClassName('info-container-heading');
+	
 	if(old.length > 0) {
 		main.removeChild(oldInfoHeading[0]);
 		main.removeChild(old[0]);
