@@ -63,7 +63,7 @@ function login() {
 				currentMarkersButton.disabled = false;
 
 				addButton.addEventListener('click', add);
-				currentZonesButton.addEventListener('click', displayBoundaryInfo(locationsObjs));
+				currentZonesButton.addEventListener('click', currentZonesToggle);
 			}, 2000);
 
 			// Hide the login button
