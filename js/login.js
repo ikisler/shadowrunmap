@@ -5,12 +5,66 @@ var currentMarkersButton = document.getElementById('current-markers');
 
 loginButton.addEventListener('click', login);
 addButton.addEventListener('click', loginFirst);
-currentZonesButton.addEventListener('click', loginFirst);
-currentMarkersButton.addEventListener('click', loginFirst);
+//currentZonesButton.addEventListener('click', loginFirst);
+//currentMarkersButton.addEventListener('click', loginFirst);
+
+// Disable the buttons until the Firebase has time to load
+currentZonesButton.disabled = true;
+currentMarkersButton.disabled = true;
+
+setTimeout(function(){
+	currentZonesButton.disabled = false;
+	currentMarkersButton.disabled = false;
+}, 2000);
+
+/*
+// Disable the buttons until the Firebase is loaded
+			addButton.disabled = true;
+			currentZonesButton.disabled = true;
+			currentMarkersButton.disabled = true;
+			
+			setTimeout(function(){
+				addButton.disabled = false;
+				currentZonesButton.disabled = false;
+				currentMarkersButton.disabled = false;
+
+				addButton.addEventListener('click', add);
+				currentZonesButton.addEventListener('click', currentZonesToggle);
+			}, 5000);
+*/
 
 var ref = new Firebase("https://blistering-torch-7640.firebaseio.com");
 
 var locationsObjs;
+var markerObjs;
+
+// Set up info to see the current information in the Firebase
+ref.child('zones').on('value', function(snapshot) {
+	var rawData = snapshot.val(); // Raw data from the Firebase
+	locationsObjs = [];	// Holds the location objects
+
+	// Move the objects into an array
+	for(var index in rawData) {
+		var attr = rawData[index];
+		locationsObjs.push(attr);
+	}
+});
+
+ref.child('markers').on('value', function(snapshot) {
+	var rawData = snapshot.val(); // Raw data from the Firebase
+	markerObjs = []; // Holds the marker objects
+
+	// Move the objects into an array
+	for(var index in rawData) {
+		var attr = rawData[index];
+		markerObjs.push(attr);
+	}
+
+	console.log(markerObjs);
+});
+
+currentZonesButton.addEventListener('click', currentZonesToggle);
+currentMarkersButton.addEventListener('click', currentMarkersToggle);
 
 /***** Login Users *****/
 function login() {
@@ -32,42 +86,13 @@ function login() {
 			// Remove any error messages
 			removeOldErrors();
 
-			// Display information
-			ref.child('zones').on('value', function(snapshot) {
-				var rawData = snapshot.val(); // Raw data from the Firebase
-				locationsObjs = [];	// Holds the location objects
-
-				// Move the objects into an array
-				for(var index in rawData) {
-					var attr = rawData[index];
-					locationsObjs.push(attr);
-				}
-
-				//displayBoundaryInfo(locationsObjs);
-
-				// Remove loginFirst messages
-				loginButton.removeEventListener('click', loginFirst);
-				addButton.removeEventListener('click', loginFirst);
-				currentZonesButton.removeEventListener('click', loginFirst);
-				currentMarkersButton.removeEventListener('click', loginFirst);
-			});
-
-			// Disable the buttons until the Firebase is loaded
-			addButton.disabled = true;
-			currentZonesButton.disabled = true;
-			currentMarkersButton.disabled = true;
-			
-			setTimeout(function(){
-				addButton.disabled = false;
-				currentZonesButton.disabled = false;
-				currentMarkersButton.disabled = false;
-
-				addButton.addEventListener('click', add);
-				currentZonesButton.addEventListener('click', currentZonesToggle);
-			}, 2000);
+			// Remove loginFirst messages
+			addButton.removeEventListener('click', loginFirst);
 
 			// Hide the login button
 			loginButton.className += ' invisible';
+
+			addButton.addEventListener('click', add);
 		}
 	});
 }
@@ -89,10 +114,34 @@ function currentZonesToggle() {
 	}
 }
 
+function currentMarkersToggle() {
+	// If the info-container exists, delete it.
+	// otherwise, display it.
+	if(!removeMarkerInfo()) {
+		displayMarkerInfo();
+	}
+}
+
 function removeBoundaryInfo() {
 	var main = document.getElementsByTagName('main')[0];
-	var old = document.getElementsByClassName('info-container');
-	var oldInfoHeading = document.getElementsByClassName('info-container-heading');
+	var old = document.getElementsByClassName('info-container-zones');
+	var oldInfoHeading = document.getElementsByClassName('info-container-zones-heading');
+	
+	if(old.length > 0) {
+		main.removeChild(oldInfoHeading[0]);
+		main.removeChild(old[0]);
+		// Info-container was removed
+		return true;
+	} else {
+		// info-container didn't exist
+		return false;
+	}
+}
+
+function removeMarkerInfo() {
+	var main = document.getElementsByTagName('main')[0];
+	var old = document.getElementsByClassName('info-container-markers');
+	var oldInfoHeading = document.getElementsByClassName('info-container-markers-heading');
 	
 	if(old.length > 0) {
 		main.removeChild(oldInfoHeading[0]);
@@ -115,11 +164,11 @@ function displayBoundaryInfo() {
 	removeBoundaryInfo();
 
 	var infoContainer = document.createElement('div');
-	infoContainer.className = 'info-container';
+	infoContainer.className = 'info-container-zones';
 
 	var currentInfo = document.createElement('h2');
-	var infoHeading = document.createTextNode('Current Information');
-	infoHeading.className = 'info-container-heading';
+	var infoHeading = document.createTextNode('Current Zones Information');
+	currentInfo.className = 'info-container-zones-heading';
 	currentInfo.appendChild(infoHeading);
 
 	var tempDiv;
@@ -137,17 +186,17 @@ function displayBoundaryInfo() {
 		tempColorDiv = document.createElement('div');
 		tempColor = document.createTextNode(locationsObjs[i].color);
 		tempColorDiv.appendChild(tempColor);
-		tempColorDiv.className = 'color';
+		tempColorDiv.className = 'zone-color line-item';
 
 		tempNameDiv = document.createElement('div');
 		tempName = document.createTextNode(locationsObjs[i].name);
 		tempNameDiv.appendChild(tempName);
-		tempNameDiv.className = 'name';
+		tempNameDiv.className = 'zone-name line-item';
 
 		tempBoundariesDiv = document.createElement('div');
 		tempBoundaries = document.createTextNode(locationsObjs[i].boundaries);
 		tempBoundariesDiv.appendChild(tempBoundaries);
-		tempBoundariesDiv.className = 'boundaries';
+		tempBoundariesDiv.className = 'zone-boundaries';
 
 		tempDiv.appendChild(tempNameDiv);
 		tempDiv.appendChild(tempColorDiv);
@@ -159,6 +208,62 @@ function displayBoundaryInfo() {
 	main.appendChild(currentInfo);
 	main.appendChild(infoContainer);
 }
+
+/***** Display Current Markers Information *****/
+function displayMarkerInfo() {
+	// Get the main element
+	var main = document.getElementsByTagName('main')[0];
+
+	// If the info container already exists on the page, destroy it
+	// This is in case the Firebase is updated while someone is looking at it
+	removeMarkerInfo();
+
+	var infoContainer = document.createElement('div');
+	infoContainer.className = 'info-container-markers';
+
+	var currentInfo = document.createElement('h2');
+	var infoHeading = document.createTextNode('Current Marker Information');
+	currentInfo.className = 'info-container-markers-heading';
+	currentInfo.appendChild(infoHeading);
+
+	var tempDiv;
+	var tempLatDiv;
+	var tempLat;
+	var tempLngDiv;
+	var tempLng;
+	var tempNameDiv;
+	var tempName;
+
+	for(var i=0; i<markerObjs.length; i++) {
+		tempDiv = document.createElement('div');
+		tempDiv.className = 'location-item';
+
+		tempNameDiv = document.createElement('div');
+		tempName = document.createTextNode(markerObjs[i].name);
+		tempNameDiv.appendChild(tempName);
+		tempNameDiv.className = 'marker-name line-item';
+
+		tempLatDiv = document.createElement('div');
+		tempLat = document.createTextNode(markerObjs[i].lat);
+		tempLatDiv.appendChild(tempLat);
+		tempLatDiv.className = 'marker-lat line-item';
+
+		tempLngDiv = document.createElement('div');
+		tempLng = document.createTextNode(markerObjs[i].lng);
+		tempLngDiv.appendChild(tempLng);
+		tempLngDiv.className = 'marker-lng line-item';
+
+		tempDiv.appendChild(tempNameDiv);
+		tempDiv.appendChild(tempLatDiv);
+		tempDiv.appendChild(tempLngDiv);
+
+		infoContainer.appendChild(tempDiv);
+	}
+
+	main.appendChild(currentInfo);
+	main.appendChild(infoContainer);
+}
+
 
 /***** Add New Zone to Firebase *****/
 function add() {
