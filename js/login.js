@@ -272,23 +272,25 @@ function addNewZone() {
 	removeOldErrors();
 
 	// Get the contents of the input boxes
-	var newName = document.getElementsByClassName('add-item-name')[0].value;
-	var newColor = document.getElementsByClassName('add-item-color')[0].value;
-	var newBoundaries = document.getElementsByClassName('add-item-boundaries')[0].value;
+	var newName = document.getElementsByClassName('add-item-name')[0];
+	var newColor = document.getElementsByClassName('add-item-color')[0];
+	var newBoundaries = document.getElementsByClassName('add-item-boundaries')[0];
 	var zonesRef = ref.child('zones'); // The zones section of the Firebase
 
 	// Push a new zone into the Firebase
 	var newBoundary = zonesRef.push();
 	newBoundary.set({
-		'name': newName,
-		'color': newColor,
-		'boundaries': newBoundaries
+		'name': newName.value,
+		'color': newColor.value,
+		'boundaries': newBoundaries.value
+	}, function(error){ // If information isn't added to the Firebase, show an error
+		showErrorMessage('New zone not added.  Error: ', error);
 	});
 
 	// Reset the input boxes back to empty
-	newName = '';
-	newColor = '';
-	newBoundaries = '';
+	newName.value = '';
+	newColor.value = '';
+	newBoundaries.value = '';
 }
 
 /***** Add new marker to Firebase *****/
@@ -303,24 +305,26 @@ function addNewMarker() {
 	removeOldErrors();
 
 	// Get the contents of the input boxes
-	var newName = document.getElementsByClassName('add-item-marker-name')[0].value;
-	var newLat = document.getElementsByClassName('add-item-marker-lat')[0].value;
-	var newLng = document.getElementsByClassName('add-item-marker-lng')[0].value;
+	var newName = document.getElementsByClassName('add-item-marker-name')[0];
+	var newLat = document.getElementsByClassName('add-item-marker-lat')[0];
+	var newLng = document.getElementsByClassName('add-item-marker-lng')[0];
 	var markersRef = ref.child('markers'); // The markers section of the Firebase
 
 	// Push a new marker into the Firebase
 	var newMarker = markersRef.push();
 	console.log(newMarker.toString());
 	newMarker.set({
-		'name': newName,
-		'lat': newLat,
-		'lng': newLng
+		'name': newName.value,
+		'lat': newLat.value,
+		'lng': newLng.value
+	}, function(error){ // If information isn't added to the Firebase, show an error
+		showErrorMessage('New marker not added.  Error: ', error);
 	});
 
 	// Reset the input boxes back to empty
-	newName = '';
-	newLat = '';
-	newLng = '';
+	newName.value = '';
+	newLat.value = '';
+	newLng.value = '';
 }
 
 /**** Validation *****/
