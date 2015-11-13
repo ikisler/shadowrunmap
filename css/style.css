@@ -85,7 +85,7 @@ header {
 	float: left;
 }
 
-/***** Add New Boundaries *****/
+/***** Get New Boundaries *****/
 footer {
 	width: 15%;
 	min-width: 200px;
@@ -191,8 +191,6 @@ button:focus {
 	background-color: #ccc;
 	border-color: #777;
 }
-
-/***** Add New Information *****/
 #add {
 	vertical-align: top;
 	padding: 3px 8px;
@@ -204,6 +202,7 @@ button:focus {
 	margin-top: 20px;
 }
 
+/***** Add New Information *****/
 .add-item-box {
 	display: inline-block;
 	width: 30%;
@@ -214,9 +213,6 @@ button:focus {
 	text-align: center;
 }
 
-.add-item-name,
-.add-item-color,
-.add-item-boundaries, 
 input {
 	width: 95%;
 	height: 1.5em;
@@ -226,23 +222,17 @@ input {
 	border-bottom: 2px solid #aef;
 }
 
-.add-item-name:hover,
-.add-item-color:hover,
-.add-item-boundaries:hover,
 input:hover {
 	background-color: #aef;
 }
 
-.add-item-name:focus,
-.add-item-color:focus,
-.add-item-boundaries:focus,
 input:focus {
 	border-bottom: 2px solid #000;
 	background-color: #aef;
 	outline: none;
 }
 
-/*** Add Item Error Messages ***/
+/*** Error Messages ***/
 .error-message-container {
 	font-size: 1.1em;
 	list-style-type: none;
