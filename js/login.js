@@ -1,12 +1,11 @@
 var loginButton = document.getElementById('login');
-var addButton = document.getElementById('add');
+var addZonesButton = document.getElementById('add-zones');
+var addMarkersButton = document.getElementById('add-markers');
 var currentZonesButton = document.getElementById('current-zones');
 var currentMarkersButton = document.getElementById('current-markers');
 
 loginButton.addEventListener('click', login);
-addButton.addEventListener('click', loginFirst);
-//currentZonesButton.addEventListener('click', loginFirst);
-//currentMarkersButton.addEventListener('click', loginFirst);
+addZonesButton.addEventListener('click', loginFirst);
 
 // Disable the buttons until the Firebase has time to load
 currentZonesButton.disabled = true;
@@ -16,22 +15,6 @@ setTimeout(function(){
 	currentZonesButton.disabled = false;
 	currentMarkersButton.disabled = false;
 }, 2000);
-
-/*
-// Disable the buttons until the Firebase is loaded
-			addButton.disabled = true;
-			currentZonesButton.disabled = true;
-			currentMarkersButton.disabled = true;
-			
-			setTimeout(function(){
-				addButton.disabled = false;
-				currentZonesButton.disabled = false;
-				currentMarkersButton.disabled = false;
-
-				addButton.addEventListener('click', add);
-				currentZonesButton.addEventListener('click', currentZonesToggle);
-			}, 5000);
-*/
 
 var ref = new Firebase("https://blistering-torch-7640.firebaseio.com");
 
@@ -63,6 +46,7 @@ ref.child('markers').on('value', function(snapshot) {
 	console.log(markerObjs);
 });
 
+// After the Firebase is loaded, add listeners to toggle the display of information
 currentZonesButton.addEventListener('click', currentZonesToggle);
 currentMarkersButton.addEventListener('click', currentMarkersToggle);
 
@@ -87,25 +71,25 @@ function login() {
 			removeOldErrors();
 
 			// Remove loginFirst messages
-			addButton.removeEventListener('click', loginFirst);
+			addZonesButton.removeEventListener('click', loginFirst);
 
 			// Hide the login button
 			loginButton.className += ' invisible';
 
-			addButton.addEventListener('click', add);
+			addZonesButton.addEventListener('click', addNewZone);
+			addMarkersButton.addEventListener('click', addNewMarker);
 		}
 	});
 }
 
 
 // My UID: google:115312161939888854395
-
+/***** Tell the user to login first to add new information *****/
 function loginFirst() {
 	showErrorMessage('Please log in first.');
 }
 
-// Toggles the display of the current zones.
-// After login, attached to the currentZonesButton
+/***** Toggles the display of current zone information *****/
 function currentZonesToggle() {
 	// If the info-container exists, delete it.
 	// otherwise, display it.
@@ -114,6 +98,7 @@ function currentZonesToggle() {
 	}
 }
 
+/***** Toggles the display of current marker information *****/
 function currentMarkersToggle() {
 	// If the info-container exists, delete it.
 	// otherwise, display it.
@@ -122,39 +107,7 @@ function currentMarkersToggle() {
 	}
 }
 
-function removeBoundaryInfo() {
-	var main = document.getElementsByTagName('main')[0];
-	var old = document.getElementsByClassName('info-container-zones');
-	var oldInfoHeading = document.getElementsByClassName('info-container-zones-heading');
-	
-	if(old.length > 0) {
-		main.removeChild(oldInfoHeading[0]);
-		main.removeChild(old[0]);
-		// Info-container was removed
-		return true;
-	} else {
-		// info-container didn't exist
-		return false;
-	}
-}
-
-function removeMarkerInfo() {
-	var main = document.getElementsByTagName('main')[0];
-	var old = document.getElementsByClassName('info-container-markers');
-	var oldInfoHeading = document.getElementsByClassName('info-container-markers-heading');
-	
-	if(old.length > 0) {
-		main.removeChild(oldInfoHeading[0]);
-		main.removeChild(old[0]);
-		// Info-container was removed
-		return true;
-	} else {
-		// info-container didn't exist
-		return false;
-	}
-}
-
-/***** Display Current Zones Information *****/
+/***** Display current zones information *****/
 function displayBoundaryInfo() {
 	// Get the main element
 	var main = document.getElementsByTagName('main')[0];
@@ -209,7 +162,7 @@ function displayBoundaryInfo() {
 	main.appendChild(infoContainer);
 }
 
-/***** Display Current Markers Information *****/
+/***** Display current markers information *****/
 function displayMarkerInfo() {
 	// Get the main element
 	var main = document.getElementsByTagName('main')[0];
@@ -264,20 +217,57 @@ function displayMarkerInfo() {
 	main.appendChild(infoContainer);
 }
 
+/***** Remove the zone information from the page *****/
+function removeBoundaryInfo() {
+	var main = document.getElementsByTagName('main')[0];
+	var old = document.getElementsByClassName('info-container-zones');
+	var oldInfoHeading = document.getElementsByClassName('info-container-zones-heading');
+	
+	// If the info-container-zones div exists on the page, remove it and it's heading.
+	if(old.length > 0) {
+		main.removeChild(oldInfoHeading[0]);
+		main.removeChild(old[0]);
+		// Info-container was removed
+		return true;
+	} else {
+		// info-container didn't exist
+		return false;
+	}
+}
 
-/***** Add New Zone to Firebase *****/
-function add() {
-	var newName = document.getElementsByClassName('add-item-name')[0].value;
-	var newColor = document.getElementsByClassName('add-item-color')[0].value;
-	var newBoundaries = document.getElementsByClassName('add-item-boundaries')[0].value;
+/***** Remove the marker information from the page *****/
+function removeMarkerInfo() {
+	var main = document.getElementsByTagName('main')[0];
+	var old = document.getElementsByClassName('info-container-markers');
+	var oldInfoHeading = document.getElementsByClassName('info-container-markers-heading');
+	
+	// If the info-container-markers div exists on the page, remove it and it's heading.
+	if(old.length > 0) {
+		main.removeChild(oldInfoHeading[0]);
+		main.removeChild(old[0]);
+		// Info-container was removed
+		return true;
+	} else {
+		// info-container didn't exist
+		return false;
+	}
+}
 
-	// Validation
-	if(!validate()) {
+/***** Add new zone to Firebase *****/
+function addNewZone() {
+	// ValidateZone returns false if the new information was NOT valid.
+	// So here, we leave the function if it returns false.
+	if(!validateZone()) {
 		return false;
 	}
 
-	var zonesRef = ref.child('zones');
+	// Get the contents of the input boxes
+	var newName = document.getElementsByClassName('add-item-name')[0].value;
+	var newColor = document.getElementsByClassName('add-item-color')[0].value;
+	var newBoundaries = document.getElementsByClassName('add-item-boundaries')[0].value;
+	var zonesRef = ref.child('zones'); // The zones section of the Firebase
 
+	// Push a new zone into the Firebase
 	var newBoundary = zonesRef.push();
 	newBoundary.set({
 		'name': newName,
@@ -285,13 +275,42 @@ function add() {
 		'boundaries': newBoundaries
 	});
 
+	// Reset the input boxes back to empty
 	newName = '';
 	newColor = '';
 	newBoundaries = '';
 }
 
+/***** Add new marker to Firebase *****/
+function addNewMarker() {
+	// ValidateMarker returns false if the new information was NOT valid.
+	// So here, we leave the function if it returns false.
+	if(!validate()) {
+		return false;
+	}
+
+	// Get the contents of the input boxes
+	var newName = document.getElementsByClassName('add-item-marker-name')[0].value;
+	var newLat = document.getElementsByClassName('add-item-marker-lat')[0].value;
+	var newLng = document.getElementsByClassName('add-item-marker-lng')[0].value;
+	var markersRef = ref.child('markers'); // The markers section of the Firebase
+
+	// Push a new marker into the Firebase
+	var newMarker = markersRef.push();
+	newMarker.set({
+		'name': newName,
+		'lat': newLat,
+		'lng': newLng
+	});
+
+	// Reset the input boxes back to empty
+	newName = '';
+	newLat = '';
+	newLng = '';
+}
+
 /**** Validation *****/
-function validate() {
+function validateZone() {
 	var newName = document.getElementsByClassName('add-item-name')[0].value;
 	var newColor = document.getElementsByClassName('add-item-color')[0].value;
 	var newBoundaries = document.getElementsByClassName('add-item-boundaries')[0].value;
@@ -322,6 +341,38 @@ function validate() {
 	return true;
 }
 
+function validateMarker() {
+	var newName = document.getElementsByClassName('add-item-marker-name')[0].value;
+	var newLat = document.getElementsByClassName('add-item-marker-lat')[0].value;
+	var newLng = document.getElementsByClassName('add-item-marker-lng')[0].value;
+	var valid = true;
+
+	// Name can be anything, I don't care
+	if(newName.length === 0) {
+		showErrorMessage('Enter name');
+		valid = false;
+	}
+
+	// Lat and Lng are both doubles
+	if(newLat.search(/-?(?:\d*\.)?\d+/) < 0) {
+		showErrorMessage('Enter a valid latitude');
+		valid = false;
+
+	}
+
+	if(newLng.search(/-?(?:\d*\.)?\d+/) < 0) {
+		showErrorMessage('Enter a valid longitude');
+		valid = false;
+	}
+	// If anything is invalid, leave the function
+	if(!valid) {
+		return false;
+	}
+
+	return true;
+}
+
+/***** Show an error message *****/
 function showErrorMessage(error) {
 	// Remove any old errors
 	removeOldErrors();
@@ -340,7 +391,7 @@ function showErrorMessage(error) {
 
 }
 
-/***** Remove Error Messages *****/
+/***** Remove error message(s) *****/
 function removeOldErrors() {
 	var errorMessageContainer = document.getElementsByClassName('error-message-container')[0];
 
