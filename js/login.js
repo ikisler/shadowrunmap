@@ -285,7 +285,7 @@ function addNewZone() {
 function addNewMarker() {
 	// ValidateMarker returns false if the new information was NOT valid.
 	// So here, we leave the function if it returns false.
-	if(!validate()) {
+	if(!validateMarker()) {
 		return false;
 	}
 
