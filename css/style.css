@@ -127,6 +127,10 @@ aside {
 	width: 15%;
 }
 
+h2 {
+	margin: 30px 0 5px 0;
+}
+
 .add-page-main {
 	float: left;
 	width: 83%;
@@ -174,6 +178,18 @@ button:focus {
 	margin: 10px auto 10px auto;
 }
 
+#current-zones:disabled,
+#current-markers:disabled {
+	opacity: 0.5;
+}
+
+#current-zones:disabled:hover,
+#current-markers:disabled:hover {
+	opacity: 0.5;
+	background-color: #ccc;
+	border-color: #777;
+}
+
 /***** Add New Information *****/
 #add {
 	vertical-align: top;
@@ -198,7 +214,8 @@ button:focus {
 
 .add-item-name,
 .add-item-color,
-.add-item-boundaries {
+.add-item-boundaries, 
+input {
 	width: 95%;
 	height: 1.5em;
 	padding: 1px 5px;
@@ -209,13 +226,15 @@ button:focus {
 
 .add-item-name:hover,
 .add-item-color:hover,
-.add-item-boundaries:hover {
+.add-item-boundaries:hover,
+input:hover {
 	background-color: #aef;
 }
 
 .add-item-name:focus,
 .add-item-color:focus,
-.add-item-boundaries:focus {
+.add-item-boundaries:focus,
+input:focus {
 	border-bottom: 2px solid #000;
 	background-color: #aef;
 	outline: none;
@@ -234,28 +253,28 @@ button:focus {
 }
 
 /***** Display Existing Information *****/
-.name,
-.color,
-.boundaries {
+.line-item,
+.zone-boundaries {
 	display: inline-block;
 	height: 100px;
 }
 
-.name,
-.color {
+.line-item {
 	width: 30%;
 	text-align: center;
 }
 
-.boundaries {
+.zone-boundaries {
 	width: 30%;
 	overflow: scroll;
+	display: inline-flex;
+	margin-bottom: 10px;
 }
 
-.info-container {
+.info-container-zones,
+.info-container-markers {
 	width: 100%;
 	padding: 10px 0;
-	margin: 30px 0;
 	background-color: #777;
 }
 
