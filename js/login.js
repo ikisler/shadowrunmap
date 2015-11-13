@@ -1,3 +1,15 @@
+/*****
+"Shadowrun Map" by Isabeau Kisler
+Application shows zones and map markers from the roleplaying game, Shadowrun 2050.
+
+New information can be added to the database through add.html.
+
+Project created for a personal Shadowrun game, using Firebase and Google Maps API.
+
+11/15
+*****/
+
+// Buttons
 var goHome = document.getElementById('go-home');
 var loginButton = document.getElementById('login');
 var addZonesButton = document.getElementById('add-zones');
@@ -67,9 +79,6 @@ function login() {
 				showErrorMessage('Login failed!  Check your internet connection and try again');
 			}
 		} else {
-			console.log("Authenticated successfully with payload:", authData);
-			console.log(authData.uid);
-
 			// If successful:
 			// Remove any error messages
 			removeOldErrors();
@@ -284,7 +293,7 @@ function addNewZone() {
 		'color': newColor.value,
 		'boundaries': newBoundaries.value
 	}, function(error){ // If information isn't added to the Firebase, show an error
-		showErrorMessage('New zone not added.  Error: ', error);
+		showErrorMessage('New zone not added.  Error: ' + error);
 	});
 
 	// Reset the input boxes back to empty
@@ -312,13 +321,12 @@ function addNewMarker() {
 
 	// Push a new marker into the Firebase
 	var newMarker = markersRef.push();
-	console.log(newMarker.toString());
 	newMarker.set({
 		'name': newName.value,
 		'lat': newLat.value,
 		'lng': newLng.value
 	}, function(error){ // If information isn't added to the Firebase, show an error
-		showErrorMessage('New marker not added.  Error: ', error);
+		showErrorMessage('New marker not added.  Error: ' + error);
 	});
 
 	// Reset the input boxes back to empty

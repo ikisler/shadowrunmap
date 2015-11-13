@@ -1,3 +1,14 @@
+/*****
+"Shadowrun Map" by Isabeau Kisler
+Application shows zones and map markers from the roleplaying game, Shadowrun 2050.
+
+New information can be added to the database through add.html.
+
+Project created for a personal Shadowrun game, using Firebase and Google Maps API.
+
+11/15
+*****/
+
 /***** Error Handling *****/
 // If the browser can't cannot to the Firebase in five seconds, create and show an error message
 var cannotConnect = setTimeout(function(){
@@ -162,10 +173,6 @@ window.onload = function() {
 			newBoundariesText.className = newBoundariesText.className.replace(' invisible', '');
 		}
 	}
-}
-
-function copyBoundaries() {
-	var newBoundariesText = document.getElementsByClassName('new-area-boundaries-text')[0].value;
 }
 
 /***** The Map Key *****/
