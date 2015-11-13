@@ -147,6 +147,7 @@ button {
 	border-radius: 5px;
 	border: solid 2px #777;
 	font-weight: bold;
+	vertical-align: top;
 }
 
 button:hover {
@@ -171,7 +172,8 @@ button:focus {
 }
 
 #current-zones,
-#current-markers {
+#current-markers,
+#go-home {
 	width: 100px;
 	height: 50px;
 	display: block;

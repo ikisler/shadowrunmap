@@ -1,11 +1,18 @@
+var goHome = document.getElementById('go-home');
 var loginButton = document.getElementById('login');
 var addZonesButton = document.getElementById('add-zones');
 var addMarkersButton = document.getElementById('add-markers');
 var currentZonesButton = document.getElementById('current-zones');
 var currentMarkersButton = document.getElementById('current-markers');
 
+// Send the user back to the map page
+goHome.addEventListener('click', function() {
+	location.href='index.html';
+});
+
 loginButton.addEventListener('click', login);
 addZonesButton.addEventListener('click', loginFirst);
+addMarkersButton.addEventListener('click', loginFirst);
 
 // Disable the buttons until the Firebase has time to load
 currentZonesButton.disabled = true;
@@ -42,8 +49,6 @@ ref.child('markers').on('value', function(snapshot) {
 		var attr = rawData[index];
 		markerObjs.push(attr);
 	}
-
-	console.log(markerObjs);
 });
 
 // After the Firebase is loaded, add listeners to toggle the display of information
@@ -54,14 +59,13 @@ currentMarkersButton.addEventListener('click', currentMarkersToggle);
 function login() {
 	ref.authWithOAuthPopup("google", function(error, authData) {
 		if (error) {
-//			if (error.code === "TRANSPORT_UNAVAILABLE") {
-//				ref.authWithOAuthRedirect("google", function(error) {
-//					console.log("BING");
-//					console.log(authData);
-//				});
-//			} else {
-				console.log("Login Failed!", error);
-//			}
+			if (error.code === "TRANSPORT_UNAVAILABLE") {
+				ref.authWithOAuthRedirect("google", function(error) {
+					showErrorMessage('Login failed!  Check your internet connection and try again');
+				});
+			} else {
+				showErrorMessage('Login failed!  Check your internet connection and try again');
+			}
 		} else {
 			console.log("Authenticated successfully with payload:", authData);
 			console.log(authData.uid);
@@ -72,18 +76,21 @@ function login() {
 
 			// Remove loginFirst messages
 			addZonesButton.removeEventListener('click', loginFirst);
+			addMarkersButton.removeEventListener('click', loginFirst);
 
 			// Hide the login button
 			loginButton.className += ' invisible';
 
+			// Add addNew functions
 			addZonesButton.addEventListener('click', addNewZone);
 			addMarkersButton.addEventListener('click', addNewMarker);
+
+			// Show a message saying that login was successful
+			showErrorMessage('Login successful');
 		}
 	});
 }
 
-
-// My UID: google:115312161939888854395
 /***** Tell the user to login first to add new information *****/
 function loginFirst() {
 	showErrorMessage('Please log in first.');
@@ -261,6 +268,9 @@ function addNewZone() {
 		return false;
 	}
 
+	// Remove any old errors
+	removeOldErrors();
+
 	// Get the contents of the input boxes
 	var newName = document.getElementsByClassName('add-item-name')[0].value;
 	var newColor = document.getElementsByClassName('add-item-color')[0].value;
@@ -289,6 +299,9 @@ function addNewMarker() {
 		return false;
 	}
 
+	// Remove any old errors
+	removeOldErrors();
+
 	// Get the contents of the input boxes
 	var newName = document.getElementsByClassName('add-item-marker-name')[0].value;
 	var newLat = document.getElementsByClassName('add-item-marker-lat')[0].value;
@@ -297,6 +310,7 @@ function addNewMarker() {
 
 	// Push a new marker into the Firebase
 	var newMarker = markersRef.push();
+	console.log(newMarker.toString());
 	newMarker.set({
 		'name': newName,
 		'lat': newLat,
