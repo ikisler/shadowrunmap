@@ -29,7 +29,7 @@ var cannotConnect = setTimeout(function(){
 var myFirebaseRef = new Firebase('https://blistering-torch-7640.firebaseio.com/');
 
 // When the Firebase for the Zones is loaded, do all the things
-myFirebaseRef.child('zones').on('value', function(snapshot) {
+myFirebaseRef.child('zones').orderByChild('name').on('value', function(snapshot) {
 	var rawData = snapshot.val(); // Raw data from the Firebase
 	var locationsObjs = [];	// Holds the location objects
 	var locationBoundaries = []; // Holds the corrected location boundaries

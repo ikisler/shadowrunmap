@@ -41,7 +41,7 @@ var locationsObjs;
 var markerObjs;
 
 // Set up info to see the current information in the Firebase
-ref.child('zones').on('value', function(snapshot) {
+ref.child('zones').orderByChild('name').on('value', function(snapshot) {
 	var rawData = snapshot.val(); // Raw data from the Firebase
 	locationsObjs = [];	// Holds the location objects
 
@@ -52,7 +52,7 @@ ref.child('zones').on('value', function(snapshot) {
 	}
 });
 
-ref.child('markers').on('value', function(snapshot) {
+ref.child('markers').orderByChild('name').on('value', function(snapshot) {
 	var rawData = snapshot.val(); // Raw data from the Firebase
 	markerObjs = []; // Holds the marker objects
 
