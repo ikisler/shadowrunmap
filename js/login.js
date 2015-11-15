@@ -41,7 +41,8 @@ var locationsObjs;
 var markerObjs;
 
 // Set up info to see the current information in the Firebase
-ref.child('zones').on('value', function(snapshot) {
+var zonesRef = ref.child('zones');
+zonesRef.orderByChild('name').on('value', function(snapshot) {
 	var rawData = snapshot.val(); // Raw data from the Firebase
 	locationsObjs = [];	// Holds the location objects
 
@@ -52,7 +53,8 @@ ref.child('zones').on('value', function(snapshot) {
 	}
 });
 
-ref.child('markers').on('value', function(snapshot) {
+var markerRef = ref.child('markers');
+markerRef.orderByChild('name').on('value', function(snapshot) {
 	var rawData = snapshot.val(); // Raw data from the Firebase
 	markerObjs = []; // Holds the marker objects
 
@@ -289,11 +291,9 @@ function addNewZone() {
 	// Push a new zone into the Firebase
 	var newBoundary = zonesRef.push();
 	newBoundary.set({
-		document.getElementsByClassName('add-item-name')[0].value: {
-			'name': newName.value,
-			'color': newColor.value,
-			'boundaries': newBoundaries.value
-		}
+		'name': newName.value,
+		'color': newColor.value,
+		'boundaries': newBoundaries.value
 	}, function(error){ // If information isn't added to the Firebase, show an error
 		if(error) {
 			showErrorMessage('New zone not added.  Error: ' + error);
@@ -328,11 +328,9 @@ function addNewMarker() {
 	// Push a new marker into the Firebase
 	var newMarker = markersRef.push();
 	newMarker.set({
-		document.getElementsByClassName('add-item-marker-name')[0].value: {
-			'name': newName.value,
-			'lat': newLat.value,
-			'lng': newLng.value
-		}
+		'name': newName.value,
+		'lat': newLat.value,
+		'lng': newLng.value
 	}, function(error){ // If information isn't added to the Firebase, show an error
 		if(error) {
 			showErrorMessage('New marker not added.  Error: ' + error);
