@@ -81,13 +81,13 @@ header {
 /***** Map *****/
 #map-canvas {
 	height: 600px;
-	width: 84%;
+	width: 79%;
 	float: left;
 }
 
 /***** Get New Boundaries *****/
 footer {
-	width: 15%;
+	width: 20%;
 	min-width: 200px;
 	float: right;
 }
@@ -109,7 +109,11 @@ footer {
 
 .new-area-boundaries-check,
 span {
-	vertical-align: top;
+	vertical-align: middle;
+}
+
+.new-area-boundaries-check {
+	width: auto;
 }
 
 .new-area-boundaries-text {
@@ -123,8 +127,7 @@ span {
 
 /***** Add Information Page *****/
 aside {
-	float: right;
-	width: 15%;
+	float: left;
 }
 
 h2 {
@@ -133,11 +136,12 @@ h2 {
 
 .add-page-main {
 	float: left;
-	width: 83%;
+	width: 75%;
 }
 
 .add-page-footer {
-	width: 100%;
+	width: auto;
+	float: left;
 }
 
 /***** Buttons *****/
@@ -191,6 +195,7 @@ button:focus {
 	background-color: #ccc;
 	border-color: #777;
 }
+
 #add {
 	vertical-align: top;
 	padding: 3px 8px;
@@ -275,4 +280,58 @@ input:focus {
 	border-bottom: 2px solid black;
 	margin: 30px auto 0 auto;
 	vertical-align: top;
+}
+
+/***** Responsive *****/
+@media (max-width: 450px) {
+	.logo-front {
+		font-size: 1.8em;
+	}
+
+	.logo-back {
+		font-size: 2.5em;
+	}
+
+	.key-location {
+		width: 130px;
+		margin-right: 10px;
+	}
+
+	h2 {
+		font-size: 1.2em;
+	}
+}
+
+@media (max-width: 1000px) {
+	footer,
+	.key {
+		float: initial;
+	}
+
+	.key {
+		width: 100%;
+	}
+
+	#map-canvas {
+		width: 100%;
+	}
+
+	.add-page-main {
+		width: 100%;
+	}
+
+	aside {
+		width: 100%;
+		height: auto;
+		vertical-align: middle;
+		text-align: center;
+		float: initial;
+	}
+
+	#current-zones,
+	#current-markers,
+	#go-home {
+		display: inline-block;
+		vertical-align: middle;
+	}
 }
