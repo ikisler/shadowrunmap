@@ -3,6 +3,8 @@ body {
 	background-color: #aaa;
 	color: #fff;
 	height: 100%;
+	width: 100%;
+	margin-left: 0;
 }
 
 a {
@@ -131,7 +133,7 @@ aside {
 }
 
 h2 {
-	margin: 30px 0 5px 0;
+	margin: 30px 0 5px 40px;
 }
 
 .add-page-main {
@@ -281,6 +283,42 @@ input:focus {
 	margin: 30px auto 0 auto;
 	vertical-align: top;
 }
+
+/***** Bio Page *****/
+h1 {
+	text-align: center;
+	background-color: #000;
+	padding: 10px 0;
+}
+
+.bio {
+	background-color: #554488;
+	min-height: 250px;
+	margin: 40px auto  auto 40px;
+}
+
+.bio-portrait {
+	max-width: 200px;
+	float: left;
+	margin: -20px 30px 30px -20px;
+}
+
+.bio-pic {
+	max-height: 220px;
+	max-width: 200px;
+}
+
+.bio-name {
+	background-color: #000;
+	margin-top: -4px;
+	padding: 5px;
+	text-align: center;
+}
+
+.bio-description {
+	padding: 20px;
+}
+
 
 /***** Responsive *****/
 @media (max-width: 450px) {
