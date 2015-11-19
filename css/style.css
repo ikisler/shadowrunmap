@@ -70,9 +70,13 @@ a:hover {
 }
 
 .hidden {
-	visibility: hidden;
+	display: none;
 }
 
+.white-out {
+	background-color: #fff;
+	opacity: 0.4;
+}
 
 
 /*** Header and Logo ***/

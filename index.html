@@ -26,24 +26,26 @@
 		<main>
 			<div class="featured-container">
 				<div class="hero">
-					<img src="img/screenshots/bios.jpg">
-					<div class="description">
-						<h2 class="hero-description">About the Characters</h2>
-					</div>
+					<img class="hero-img" src="" alt="hero image">
+					<a class="hero-link" href="">
+						<div class="description">
+							<h2 class="hero-description"></h2>
+						</div>
+					</a>
 				</div>
 				<div class="featured-list">
 					<div class="featured-item">
-						<img class="featured-thumbnail" src="img/screenshots/bios.jpg">
+						<img class="featured-thumbnail" src="img/screenshots/bios.jpg" alt="thumbnail image">
 						<div class="description featured-thumbnail-description">About the Characters</div>
 					</div>
 
-					<div class="featured-item">
-						<img class="featured-thumbnail" src="img/screenshots/bios.jpg">
+					<div class="featured-item white-out">
+						<img class="featured-thumbnail" src="img/screenshots/bios.jpg" alt="thumbnail image">
 						<div class="description featured-thumbnail-description">Seattle Map</div>
 					</div>
 					
-					<div class="featured-item">
-						<img class="featured-thumbnail" src="img/screenshots/bios.jpg">
+					<div class="featured-item white-out">
+						<img class="featured-thumbnail" src="img/screenshots/bios.jpg" alt="thumbnail image">
 						<div class="description featured-thumbnail-description">Runs</div>
 					</div>
 				</div>
@@ -54,5 +56,55 @@
 		<footer>
 			<a class="attribution" href="http://ikisler.github.io/portfolio" target="_blank">Created by Isabeau Kisler</a>
 		</footer>
+		<script>
+			imgs = [
+				{
+					src: 'img/screenshots/bios.jpg',
+					description: 'About the Characters',
+					link: 'bios.html'
+				},
+				{
+					src: 'img/screenshots/bios.jpg',
+					description: 'Seattle Map',
+					link: 'map.html'
+				},
+				{
+					src: 'img/screenshots/bios.jpg',
+					description: 'Runs',
+					link: 'runs.html'
+				}
+			];
+
+			var heroImg = document.getElementsByClassName('hero-img')[0];
+			var heroLink = document.getElementsByClassName('hero-link')[0];
+			var heroDescription = document.getElementsByClassName('hero-description')[0];
+			var featuredItem = document.getElementsByClassName('featured-item');
+			var currentIndex = 0; // Keeps track of which image is being shown in the Hero section
+
+			iterateHeroSlider();
+
+			setInterval(iterateHeroSlider, 4000);
+
+			function iterateHeroSlider() {
+				heroImg.src = imgs[currentIndex].src;
+				heroLink.href = imgs[currentIndex].link;
+				heroDescription.innerHTML = imgs[currentIndex].description;
+
+				for(var i=0; i<imgs.length; i++) {
+					if(featuredItem[i].className.search('white-out') < 0) {
+						featuredItem[i].className += ' white-out';
+					}
+				}
+
+				featuredItem[currentIndex].className = featuredItem[currentIndex].className.replace(' white-out', '');
+
+				// If the current index is about to go beyond the array, reset it back to zero
+				if(currentIndex === 2) {
+					currentIndex = 0;
+				} else {
+					currentIndex++;
+				}
+			}
+		</script>
 	</body>
 </html>
