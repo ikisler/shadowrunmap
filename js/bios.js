@@ -1,3 +1,25 @@
+function lonelyInteger(arr) {
+    var arrBeg = arr.toString();
+
+    var lonelyInt;
+    
+    if(arr.length === 1) {
+        lonelyInt = arr[0];
+    } else {
+    	for(var i=0; i<arr.length; i++) {
+    		if(arrBeg.indexOf(arr[i]) === arrBeg.lastIndexOf(arr[i])) {
+    			lonelyInt = arr[i];
+    		}
+    	}
+    }
+
+    return lonelyInt;
+}
+
+
+console.log('total ', lonelyInteger([1,1,2]));
+
+
 var main = document.getElementsByTagName('main')[0];
 
 /***** Error Handling *****/

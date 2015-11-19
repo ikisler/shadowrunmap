@@ -16,6 +16,65 @@ a:hover {
 	color: #aef;
 }
 
+/*** Hero Slider Thing ***/
+.featured-container {
+	max-width: 770px;
+	margin: 30px auto;
+}
+
+.hero,
+.featured-list {
+	display: inline-block;
+}
+
+.hero {
+	position: relative;
+}
+
+.hero img {
+	max-width: 550px;
+}
+
+.featured-list {
+	width: 150px;
+	//height: 450px;
+	vertical-align: top;
+}
+
+.featured-item {
+	position: relative;
+}
+
+.featured-thumbnail {
+	max-width: 150px;
+	max-height: 150px;
+	overflow: hidden;
+	display: flex;
+	margin: 30px auto;
+}
+
+.hero-description {
+	margin: auto 5px;
+	padding: 30px 10px;
+
+}
+
+.description {
+	background-color: #fff;
+	color: #000;
+	opacity: 0.8;
+	position: absolute;
+	width: 100%;
+	bottom: 10%;
+	padding: 10px 0;
+}
+
+.hidden {
+	visibility: hidden;
+}
+
+
+
 /*** Header and Logo ***/
 header {
 	padding: 10px;

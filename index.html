@@ -6,7 +6,7 @@
 		<link rel="stylesheet" href="css/style.css">
 		<script src="https://cdn.firebase.com/js/client/2.3.1/firebase.js"></script>
 		
-		<title>Peter's Shadowrun Map</title>
+		<title>Peter's Shadowrun Game</title>
 	</head>
 	<body>
 		<header>
@@ -15,25 +15,44 @@
 				<div class="logo-back">Shadowrun Map</div>
 			</div>
 		</header>
+
+		<nav>
+			<a href="index.html">Main</a>
+			<a href="bios.html">Characters</a>
+			<a href="runs.html">Runs</a>
+			<a href="bios.html">Map</a>
+		</nav>
 		
 		<main>
-				<map>
-		        	<div id="map-canvas"></div>
-				</map>
+			<div class="featured-container">
+				<div class="hero">
+					<img src="img/screenshots/bios.jpg">
+					<div class="description">
+						<h2 class="hero-description">About the Characters</h2>
+					</div>
+				</div>
+				<div class="featured-list">
+					<div class="featured-item">
+						<img class="featured-thumbnail" src="img/screenshots/bios.jpg">
+						<div class="description featured-thumbnail-description">About the Characters</div>
+					</div>
+
+					<div class="featured-item">
+						<img class="featured-thumbnail" src="img/screenshots/bios.jpg">
+						<div class="description featured-thumbnail-description">Seattle Map</div>
+					</div>
+					
+					<div class="featured-item">
+						<img class="featured-thumbnail" src="img/screenshots/bios.jpg">
+						<div class="description featured-thumbnail-description">Runs</div>
+					</div>
+				</div>
+			</div>
 
 		</main>
 
 		<footer>
 			<a class="attribution" href="http://ikisler.github.io/portfolio" target="_blank">Created by Isabeau Kisler</a>
-			<div class="add-new-boundaries">
-				<span>New Bounds:</span> <input class="new-area-boundaries-check" type="checkbox">
-				<div>
-					<textarea class="new-area-boundaries-text invisible"></textarea>
-					<a href="add.html">Admin</a>
-				</div>
-			</div>
 		</footer>
-		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhZW3pJBKP9ToFfTH9_jxVN-V3fA9d3R4"></script>
-		<script src="js/app.js"></script>
 	</body>
 </html>
