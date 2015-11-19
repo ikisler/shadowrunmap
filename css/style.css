@@ -113,6 +113,27 @@ header {
 	color: #fff;
 }
 
+/***** Navigation *****/
+nav {
+	background-color: #000;
+	padding: 10px 30px;
+	text-align: center;
+	display: flex;
+	justify-content: space-between;
+}
+
+nav a {
+	color: #fff;
+	font-size: 1.3em;
+	padding: 0 20px;
+	text-transform: uppercase;
+}
+
+.nav-highlight {
+	font-size: 2em;
+	//color: #aaa;
+}
+
 /***** Map Key *****/
 .key {
 	width: 15%;
@@ -355,7 +376,7 @@ h1 {
 }
 
 .bio {
-	background-color: #554488;
+	background-color: #548;
 	min-height: 250px;
 	margin: 40px auto  auto 40px;
 }
