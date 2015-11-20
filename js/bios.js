@@ -1,3 +1,4 @@
+/*
 function lonelyInteger(arr) {
     var arrBeg = arr.toString();
 
@@ -18,77 +19,75 @@ function lonelyInteger(arr) {
 
 
 console.log('total ', lonelyInteger([1,1,2]));
+*/
 
-
-var main = document.getElementsByTagName('main')[0];
-
-/***** Error Handling *****/
-// If the browser can't cannot to the Firebase in five seconds, create and show an error message
-var cannotConnect = setTimeout(function(){
-	var errorMessage = document.createElement('div');
-	errorMessage.className = 'error-message';
-	var message = document.createTextNode('An error has occured.  Please check your internet connection or try again later.');
-	errorMessage.appendChild(message);
-	main.appendChild(errorMessage);
-
-}, 5000);
 
 /***** Setting up the Firebase *****/
 // Create a reference to the Firebase containing zone information.
-var myFirebaseRef = new Firebase('https://blistering-torch-7640.firebaseio.com/characters');
+var firebaseRef = {
+	main: new Firebase('https://blistering-torch-7640.firebaseio.com/')
+};
 
-// When the Firebase for the Characters is loaded, do all the things
-myFirebaseRef.orderByChild('name').on('value', function(snapshot) {
+var biosObj = {};
 
-	var characters = snapshot.val(); // Raw data from the Firebase
-	var locationsObjs = [];	// Holds the location objects
-	var locationBoundaries = []; // Holds the corrected location boundaries
+biosObj.start = function() {
+	var main = document.getElementsByTagName('main')[0];
 
-	// Clear the timeout for the error message
-	clearTimeout(cannotConnect);
-/*
-	var bio = document.createElement('div');
-	bio.className = 'bio';
-	var bioPortrait = document.createElement('figure');
-	bioPortrait.className = 'bio-portrait';
-	var bioPic = document.createElement('img');
-	bioPic.className = 'bio-pic';
-	var bioName = document.createElement('figcaption');
-	bioName.className = 'bio-name';
-	var bioDescription = document.createElement('div');
-	bioDescription.className = 'bio-description';
-*/
-	// If the character information exists on the page already, remove it
-	while(main.firstChild) {
-		main.removeChild(main.firstChild);
-	}
+	/***** Error Handling *****/
+	// If the browser can't cannot to the Firebase in five seconds, create and show an error message
+	cannotConnect = setTimeout(function(){
+		var errorMessage = document.createElement('div');
+		errorMessage.className = 'error-message';
+		var message = document.createTextNode('An error has occured.  Please check your internet connection or try again later.');
+		errorMessage.appendChild(message);
+		main.appendChild(errorMessage);
 
-	for(var characterName in characters) {
-		var bio = document.createElement('div');
-		bio.className = 'bio';
-		var bioPortrait = document.createElement('figure');
-		bioPortrait.className = 'bio-portrait';
-		var bioPic = document.createElement('img');
-		bioPic.className = 'bio-pic';
-		var bioName = document.createElement('figcaption');
-		bioName.className = 'bio-name';
-		var bioDescription = document.createElement('div');
-		bioDescription.className = 'bio-description';
+	}, 5000);
 
-		bioName.innerHTML = characterName;
-		bioPic.src = characters[characterName].img;
-		bioPic.alt = characterName + "'s pic";
+	// When the Firebase for the Characters is loaded, do all the things
+	firebaseRef.main.child('characters').orderByChild('name').on('value', function(snapshot) {
 
-		bioPortrait.appendChild(bioPic);
-		bioPortrait.appendChild(bioName);
+		var characters = snapshot.val(); // Raw data from the Firebase
+		var locationsObjs = [];	// Holds the location objects
+		var locationBoundaries = []; // Holds the corrected location boundaries
 
-		bioDescription.innerHTML = characters[characterName].description;
+		// Clear the timeout for the error message
+		clearTimeout(cannotConnect);
 
-		bio.appendChild(bioPortrait);
-		bio.appendChild(bioDescription);
+		// If the character information exists on the page already, remove it
+		while(main.firstChild) {
+			main.removeChild(main.firstChild);
+		}
 
-		main.appendChild(bio);
+		for(var characterName in characters) {
+			var bio = document.createElement('div');
+			bio.className = 'bio';
+			var bioPortrait = document.createElement('figure');
+			bioPortrait.className = 'bio-portrait';
+			var bioPic = document.createElement('img');
+			bioPic.className = 'bio-pic';
+			var bioName = document.createElement('figcaption');
+			bioName.className = 'bio-name';
+			var bioDescription = document.createElement('div');
+			bioDescription.className = 'bio-description';
 
-		console.log('name: ' + characterName + ' img: ' + characters[characterName].img);
-	}
-});
+			bioName.innerHTML = characterName;
+			bioPic.src = characters[characterName].img;
+			bioPic.alt = characterName + "'s pic";
+
+			bioPortrait.appendChild(bioPic);
+			bioPortrait.appendChild(bioName);
+
+			bioDescription.innerHTML = characters[characterName].description;
+
+			bio.appendChild(bioPortrait);
+			bio.appendChild(bioDescription);
+
+			main.appendChild(bio);
+
+			console.log('name: ' + characterName + ' img: ' + characters[characterName].img);
+		}
+	});
+};
+
+biosObj.start();
