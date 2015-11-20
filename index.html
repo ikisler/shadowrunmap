@@ -67,7 +67,12 @@
 			<a class="attribution" href="http://ikisler.github.io/portfolio" target="_blank">Created by Isabeau Kisler</a>
 		</footer>
 		<script>
-			imgs = [
+			var firebaseRef = {
+				main: new Firebase('https://blistering-torch-7640.firebaseio.com/')
+			};
+
+			var updatesObj = {};
+			updatesObj.imgs = [
 				{
 					src: 'img/screenshots/bios.jpg',
 					description: 'About the Characters',
@@ -84,81 +89,87 @@
 					link: 'runs.html'
 				}
 			];
+			updatesObj.heroImg = document.getElementsByClassName('hero-img')[0];
+			updatesObj.heroLink = document.getElementsByClassName('hero-link')[0];
+			updatesObj.heroDescription = document.getElementsByClassName('hero-description')[0];
+			updatesObj.featuredItem = document.getElementsByClassName('featured-item');
+			updatesObj.currentIndex = 0; // Keeps track of which image is being shown in the Hero section
 
-			var heroImg = document.getElementsByClassName('hero-img')[0];
-			var heroLink = document.getElementsByClassName('hero-link')[0];
-			var heroDescription = document.getElementsByClassName('hero-description')[0];
-			var featuredItem = document.getElementsByClassName('featured-item');
-			var currentIndex = 0; // Keeps track of which image is being shown in the Hero section
+			updatesObj.showUpdates = function() {
+				var updatesContainer = document.getElementsByClassName('updates-container')[0];
 
-			iterateHeroSlider();
+				firebaseRef.main.child('updates').on('value', function(snapshot) {
+					var updates = snapshot.val(); // Raw data from the Firebase
 
-			setInterval(iterateHeroSlider, 4000);
+					while(updatesContainer.childNodes[2]) {
+						updatesContainer.removeChild(updatesContainer.childNodes[2]);
+					}
 
-			function iterateHeroSlider() {
-				heroImg.src = imgs[currentIndex].src;
-				heroLink.href = imgs[currentIndex].link;
-				heroDescription.innerHTML = imgs[currentIndex].description;
+					for(post in updates) {
+						var article = document.createElement('article');
+						var postHeader = document.createElement('div');
+						postHeader.className = 'post-header';
+						var postTitle = document.createElement('span');
+						postTitle.className = 'post-title';
+						var postDate = document.createElement('span');
+						postDate.className = 'post-date';
+						var postBody = document.createElement('div');
+						postBody.className = 'post-body';
 
-				for(var i=0; i<imgs.length; i++) {
-					if(featuredItem[i].className.search('white-out') < 0) {
-						featuredItem[i].className += ' white-out';
+						postTitle.innerHTML = updates[post].title;
+
+						// Format Date
+						var date = post;
+						date = post.slice(0,2) + '/' + post.slice(2, 4) + '/' + post.slice(4, 6);
+
+						postDate.innerHTML = date;
+
+						postBody.innerHTML = updates[post].content;
+
+						// Add the title and date to the header
+						postHeader.appendChild(postTitle);
+						postHeader.appendChild(postDate);
+
+						// Add all the pieces to the article
+						article.appendChild(postHeader);
+						article.appendChild(postBody);
+
+						updatesContainer.appendChild(article);
+					}
+
+				});
+			};
+
+			updatesObj.iterateHeroSlider = function() {
+				updatesObj.heroImg.src = updatesObj.imgs[updatesObj.currentIndex].src;
+				updatesObj.heroLink.href = updatesObj.imgs[updatesObj.currentIndex].link;
+				updatesObj.heroDescription.innerHTML = updatesObj.imgs[updatesObj.currentIndex].description;
+
+				for(var i=0; i<updatesObj.imgs.length; i++) {
+					if(updatesObj.featuredItem[i].className.search('white-out') < 0) {
+						updatesObj.featuredItem[i].className += ' white-out';
 					}
 				}
 
-				featuredItem[currentIndex].className = featuredItem[currentIndex].className.replace(' white-out', '');
+				updatesObj.featuredItem[updatesObj.currentIndex].className = updatesObj.featuredItem[updatesObj.currentIndex].className.replace(' white-out', '');
 
 				// If the current index is about to go beyond the array, reset it back to zero
-				if(currentIndex === 2) {
-					currentIndex = 0;
+				if(updatesObj.currentIndex === 2) {
+					updatesObj.currentIndex = 0;
 				} else {
-					currentIndex++;
+					updatesObj.currentIndex++;
 				}
 			}
 
-			updatesContainer = document.getElementsByClassName('updates-container')[0];
+			updatesObj.start = function() {
+				this.iterateHeroSlider();
 
-			var myFirebaseRef = new Firebase('https://blistering-torch-7640.firebaseio.com/updates');
+				setInterval(this.iterateHeroSlider, 4000);
 
-			myFirebaseRef.on('value', function(snapshot) {
-				var updates = snapshot.val(); // Raw data from the Firebase
+				this.showUpdates();
+			};
 
-				while(updatesContainer.firstChild) {
-					updatesContainer.removeChild(updatesContainer.firstChild);
-				}
-
-				for(post in updates) {
-					var article = document.createElement('article');
-					var postHeader = document.createElement('div');
-					postHeader.className = 'post-header';
-					var postTitle = document.createElement('span');
-					postTitle.className = 'post-title';
-					var postDate = document.createElement('span');
-					postDate.className = 'post-date';
-					var postBody = document.createElement('div');
-					postBody.className = 'post-body';
-
-					postTitle.innerHTML = updates[post].title;
-
-					// Format Date
-					var date = post;
-					date = post.slice(0,2) + '/' + post.slice(2, 4) + '/' + post.slice(4, 6);
-
-					postDate.innerHTML = date;
-
-					postBody.innerHTML = updates[post].content;
-
-					// Add the title and date to the header
-					postHeader.appendChild(postTitle);
-					postHeader.appendChild(postDate);
-
-					// Add all the pieces to the article
-					article.appendChild(postHeader);
-					article.appendChild(postBody);
-
-					updatesContainer.appendChild(article);
-				}
-			});
+			updatesObj.start();
 		</script>
 	</body>
 </html>
