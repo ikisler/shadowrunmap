@@ -95,7 +95,7 @@ loginObj.login = function() {
 		} else {
 			// If successful:
 			// Remove any error messages
-			removeOldErrors();
+			loginObj.removeOldErrors();
 
 			// Remove loginFirst messages
 			loginObj.addZonesButton.removeEventListener('click', loginObj.loginFirst);
