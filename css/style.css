@@ -3,6 +3,8 @@ body {
 	background-color: #aaa;
 	color: #fff;
 	height: 100%;
+	width: 100%;
+	margin-left: 0;
 }
 
 a {
@@ -46,6 +48,111 @@ header {
 	top: 15px;
 	font-size: 3em;
 	color: #fff;
+}
+
+/***** Navigation *****/
+nav {
+	background-color: #000;
+	padding: 10px 30px;
+	text-align: center;
+	display: flex;
+	justify-content: space-between;
+}
+
+nav a {
+	color: #fff;
+	font-size: 1.3em;
+	padding: 0 20px;
+	text-transform: uppercase;
+}
+
+.nav-highlight {
+	font-size: 2em;
+	//color: #aaa;
+}
+
+/*** Hero Slider Thing ***/
+.featured-container {
+	max-width: 770px;
+	margin: 30px auto;
+}
+
+.hero,
+.featured-list {
+	display: inline-block;
+}
+
+.hero {
+	position: relative;
+}
+
+.hero img {
+	max-width: 550px;
+}
+
+.featured-list {
+	width: 150px;
+	//height: 450px;
+	vertical-align: top;
+}
+
+.featured-item {
+	position: relative;
+}
+
+.featured-thumbnail {
+	max-width: 150px;
+	max-height: 150px;
+	overflow: hidden;
+	display: flex;
+	margin: 30px auto;
+}
+
+.hero-description {
+	margin: auto 5px;
+	padding: 30px 10px;
+
+}
+
+.description {
+	background-color: #fff;
+	color: #000;
+	opacity: 0.8;
+	position: absolute;
+	width: 100%;
+	bottom: 10%;
+	padding: 10px 0;
+}
+
+.hidden {
+	display: none;
+}
+
+.white-out {
+	background-color: #fff;
+	opacity: 0.4;
+}
+
+/***** Updates *****/
+.updates-container {
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+article {
+	background-color: #548;
+	padding: 30px;
+	margin: 30px 0 0 20px;
+}
+
+.post-header {
+	background-color: #000;
+	padding: 10px;
+	margin: -50px 0 0 -50px;
+}
+
+.post-date {
+	padding-left: 20px;
 }
 
 /***** Map Key *****/
@@ -131,7 +238,7 @@ aside {
 }
 
 h2 {
-	margin: 30px 0 5px 0;
+	margin: 30px 0 5px 40px;
 }
 
 .add-page-main {
@@ -281,6 +388,42 @@ input:focus {
 	margin: 30px auto 0 auto;
 	vertical-align: top;
 }
+
+/***** Bio Page *****/
+h1 {
+	text-align: center;
+	background-color: #000;
+	padding: 10px 0;
+}
+
+.bio {
+	background-color: #548;
+	min-height: 250px;
+	margin: 40px auto  auto 40px;
+}
+
+.bio-portrait {
+	max-width: 200px;
+	float: left;
+	margin: -20px 30px 30px -20px;
+}
+
+.bio-pic {
+	max-height: 220px;
+	max-width: 200px;
+}
+
+.bio-name {
+	background-color: #000;
+	margin-top: -4px;
+	padding: 5px;
+	text-align: center;
+}
+
+.bio-description {
+	padding: 20px;
+}
+
 
 /***** Responsive *****/
 @media (max-width: 450px) {
