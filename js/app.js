@@ -1,8 +1,12 @@
 /*****
 "Shadowrun Map" by Isabeau Kisler
-Application shows zones and map markers from the roleplaying game, Shadowrun 2050.
+Website for a personal Shadowrun 2050 Game.
 
-New information can be added to the database through add.html.
+Includes:
+-- Maps page that shows zones and map markers from the game.
+-- New map information can be added through add.html
+-- Characters page that show character information
+-- Runs page that details in-game adventures
 
 Project created for a personal Shadowrun game, using Firebase and Google Maps API.
 
