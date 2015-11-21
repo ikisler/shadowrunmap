@@ -48,8 +48,6 @@ biosObj.start = function() {
 	firebaseRef.main.child('characters').orderByChild('name').on('value', function(snapshot) {
 
 		var characters = snapshot.val(); // Raw data from the Firebase
-		var locationsObjs = [];	// Holds the location objects
-		var locationBoundaries = []; // Holds the corrected location boundaries
 
 		// Clear the timeout for the error message
 		clearTimeout(cannotConnect);
@@ -84,8 +82,6 @@ biosObj.start = function() {
 			bio.appendChild(bioDescription);
 
 			main.appendChild(bio);
-
-			console.log('name: ' + characterName + ' img: ' + characters[characterName].img);
 		}
 	});
 };

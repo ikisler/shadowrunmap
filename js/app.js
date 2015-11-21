@@ -9,72 +9,78 @@ Project created for a personal Shadowrun game, using Firebase and Google Maps AP
 11/15
 *****/
 
-/***** Error Handling *****/
-// If the browser can't cannot to the Firebase in five seconds, create and show an error message
-var cannotConnect = setTimeout(function(){
-	var main = document.getElementsByTagName('main')[0];
-	var errorMessage = document.createElement('div');
-	errorMessage.className = 'error-message';
-	var message = document.createTextNode('An error has occured.  Please check your internet connection or try again later.');
-	errorMessage.appendChild(message);
-	main.appendChild(errorMessage);
-
-	// Set the map height to 0 so the error message is at the top of the page
-	document.getElementById('map-canvas').style.height = 0;
-
-}, 5000);
-
 /***** Setting up the Firebase *****/
 // Create a reference to the Firebase containing zone information.
-var myFirebaseRef = new Firebase('https://blistering-torch-7640.firebaseio.com/');
+var firebaseRef = {
+	main: new Firebase('https://blistering-torch-7640.firebaseio.com/')
+};
 
-// When the Firebase for the Zones is loaded, do all the things
-myFirebaseRef.child('zones').orderByChild('name').on('value', function(snapshot) {
-	var rawData = snapshot.val(); // Raw data from the Firebase
-	var locationsObjs = [];	// Holds the location objects
-	var locationBoundaries = []; // Holds the corrected location boundaries
+var mapObj = {};
 
-	// Clear the timeout for the error message
-	clearTimeout(cannotConnect);
+mapObj.start = function() {
+	/***** Error Handling *****/
+	// If the browser can't cannot to the Firebase in five seconds, create and show an error message
+	var cannotConnect = setTimeout(function(){
+		var main = document.getElementsByTagName('main')[0];
+		var errorMessage = document.createElement('div');
+		errorMessage.className = 'error-message';
+		var message = document.createTextNode('An error has occured.  Please check your internet connection or try again later.');
+		errorMessage.appendChild(message);
+		main.appendChild(errorMessage);
 
-	// Move the objects into an array
-	for(var index in rawData) {
-		var attr = rawData[index];
-		locationsObjs.push(attr);
-	}
+		// Set the map height to 0 so the error message is at the top of the page
+		document.getElementById('map-canvas').style.height = 0;
 
-	// Move the correction boundaries into an array
-	for(var i=0; i<locationsObjs.length; i++) {
-		locationBoundaries.push(fixBoundaries(locationsObjs[i].boundaries));
-	}
+	}, 5000);
 
-	// Create the map
-	createMap(locationBoundaries, locationsObjs);
+	// When the Firebase for the Zones is loaded, do all the things
+	firebaseRef.main.child('zones').orderByChild('name').on('value', function(snapshot) {
+		var rawData = snapshot.val(); // Raw data from the Firebase
+		var locationsObjs = [];	// Holds the location objects
+		var locationBoundaries = []; // Holds the corrected location boundaries
 
-	// Create the map key
-	createMapKey(locationsObjs);
-});
+		// Clear the timeout for the error message
+		clearTimeout(cannotConnect);
 
-// When the Firebase for the Markers is loaded, add them to the map
-myFirebaseRef.child('markers').on('value', function(snapshot) {
-	var rawData = snapshot.val(); // Raw data from the Firebase
-	var marker;
-	var latlng;
+		// Move the objects into an array
+		for(var index in rawData) {
+			var attr = rawData[index];
+			locationsObjs.push(attr);
+		}
 
-	for(var i=0; i<rawData.length; i++) {
-		latlng = {lat: rawData[i].lat, lng: rawData[i].lng};
+		// Move the correction boundaries into an array
+		for(var i=0; i<locationsObjs.length; i++) {
+			locationBoundaries.push(mapObj.fixBoundaries(locationsObjs[i].boundaries));
+		}
 
-		marker = new google.maps.Marker({
-			position: latlng,
-			map: map,
-			title: rawData[i].name
-		});
-	}
+		// Create the map
+		mapObj.createMap(locationBoundaries, locationsObjs);
 
-});
+		// Create the map key
+		mapObj.createMapKey(locationsObjs);
+	});
+
+	// When the Firebase for the Markers is loaded, add them to the map
+	firebaseRef.main.child('markers').on('value', function(snapshot) {
+		var rawData = snapshot.val(); // Raw data from the Firebase
+		var marker;
+		var latlng;
+
+		for(var i=0; i<rawData.length; i++) {
+			latlng = {lat: rawData[i].lat, lng: rawData[i].lng};
+
+			marker = new google.maps.Marker({
+				position: latlng,
+				map: map,
+				title: rawData[i].name
+			});
+		}
+
+	});
+};
 
 /***** Fix the format of the boundaries that come from the Firebase *****/
-function fixBoundaries(boundaries) {
+mapObj.fixBoundaries = function(boundaries) {
 	var tempBoundaries = boundaries.split(',. '); // Boundaries as strings
 	var fixedBoundaries = []; // Boundaries as objects
 
@@ -85,16 +91,12 @@ function fixBoundaries(boundaries) {
 
 	// Return the array of boundary objects
 	return fixedBoundaries;
-}
+};
 
 /***** Google Maps Function and Highlighted Areas *****/
-
-// Global variable to hold the current path on the map, so it can be cleared later
-var path;
-// Global variable to hold the map object, so it can be accessed for markers
-var map;
-
-function createMap(boundaries, locations) {
+mapObj.path; // Holds the current path on the map
+mapObj.map; // Holds the map object
+mapObj.createMap = function(boundaries, locations) {
 	var mapOptions = {
 		zoom: 9,
 		center: new google.maps.LatLng(47.60292227835496, -122.2507095336914),
@@ -137,10 +139,10 @@ function createMap(boundaries, locations) {
 	google.maps.event.addListener(map, 'click', function(event) {
 		//  If the new-area-boundaries checkbox is checked, add new boundary locations to the new-area-boundaries-text div
 		if(document.getElementsByClassName('new-area-boundaries-check')[0].checked) {
-			path = poly.getPath();
+			mapObj.path = poly.getPath();
 
 			// Append a new coord, and it will appear on the map
-			path.push(event.latLng);
+			mapObj.path.push(event.latLng);
 
 			// Append the new boundary value to the textbox
 			// Beginning line
@@ -151,11 +153,13 @@ function createMap(boundaries, locations) {
 			}
 		}
 	});
-}
+
+	mapObj.newPath();
+};
 
 // This code is used for creating new polygon areas
-window.onload = function() {
-	var newBoundariesCheck = document.getElementsByClassName('new-area-boundaries-check')[0];
+mapObj.newPath = function() {
+		var newBoundariesCheck = document.getElementsByClassName('new-area-boundaries-check')[0];
 	var newBoundariesText = document.getElementsByClassName('new-area-boundaries-text')[0];
 
 	newBoundariesCheck.onclick = function() {
@@ -164,8 +168,8 @@ window.onload = function() {
 		if(!newBoundariesCheck.checked) {
 			newBoundariesText.className += ' invisible';
 
-			if(path) {
-				path.clear();
+			if(mapObj.path) {
+				mapObj.path.clear();
 			}
 			newBoundariesText.value = '';
 		} else {
@@ -173,10 +177,10 @@ window.onload = function() {
 			newBoundariesText.className = newBoundariesText.className.replace(' invisible', '');
 		}
 	}
-}
+};
 
 /***** The Map Key *****/
-function createMapKey(locations) {
+mapObj.createMapKey = function(locations) {
 	// Get the main element
 	var main = document.getElementsByTagName('main');
 
@@ -222,4 +226,6 @@ function createMapKey(locations) {
 
 	// Append everything to the main element
 	main[0].appendChild(keyContainer);
-}
+};
+
+mapObj.start();
