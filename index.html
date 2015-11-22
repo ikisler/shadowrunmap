@@ -4,7 +4,6 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 		<link rel="stylesheet" href="css/style.css">
-		<script src="https://cdn.firebase.com/js/client/2.3.1/firebase.js"></script>
 		
 		<title>Peter's Shadowrun Game</title>
 	</head>
@@ -43,14 +42,14 @@
 
 					<div class="featured-item white-out">
 						<a href="map.html">
-							<img class="featured-thumbnail" src="img/screenshots/bios.jpg" alt="thumbnail image">
+							<img class="featured-thumbnail" src="img/screenshots/map_thumb.jpg" alt="thumbnail image">
 							<div class="description featured-thumbnail-description">Seattle Map</div>
 						</a>
 					</div>
 					
 					<div class="featured-item white-out">
 						<a href="runs.html">
-							<img class="featured-thumbnail" src="img/screenshots/bios.jpg" alt="thumbnail image">
+							<img class="featured-thumbnail" src="img/screenshots/runs_thumb.jpg" alt="thumbnail image">
 							<div class="description featured-thumbnail-description">Runs</div>
 						</a>
 					</div>
@@ -66,109 +65,9 @@
 		<footer>
 			<a class="attribution" href="http://ikisler.github.io/portfolio" target="_blank">Created by Isabeau Kisler</a>
 		</footer>
+		<script src="https://cdn.firebase.com/js/client/2.3.1/firebase.js"></script>
+		<script src="js/app.js"></script>
 		<script>
-			var firebaseRef = {
-				main: new Firebase('https://blistering-torch-7640.firebaseio.com/')
-			};
-
-			var updatesObj = {};
-			updatesObj.imgs = [
-				{
-					src: 'img/screenshots/bios.jpg',
-					description: 'About the Characters',
-					link: 'bios.html'
-				},
-				{
-					src: 'img/screenshots/bios.jpg',
-					description: 'Seattle Map',
-					link: 'map.html'
-				},
-				{
-					src: 'img/screenshots/bios.jpg',
-					description: 'Runs',
-					link: 'runs.html'
-				}
-			];
-			updatesObj.heroImg = document.getElementsByClassName('hero-img')[0];
-			updatesObj.heroLink = document.getElementsByClassName('hero-link')[0];
-			updatesObj.heroDescription = document.getElementsByClassName('hero-description')[0];
-			updatesObj.featuredItem = document.getElementsByClassName('featured-item');
-			updatesObj.currentIndex = 0; // Keeps track of which image is being shown in the Hero section
-
-			updatesObj.showUpdates = function() {
-				var updatesContainer = document.getElementsByClassName('updates-container')[0];
-
-				firebaseRef.main.child('updates').on('value', function(snapshot) {
-					var updates = snapshot.val(); // Raw data from the Firebase
-
-					while(updatesContainer.childNodes[2]) {
-						updatesContainer.removeChild(updatesContainer.childNodes[2]);
-					}
-
-					for(post in updates) {
-						var article = document.createElement('article');
-						var postHeader = document.createElement('div');
-						postHeader.className = 'post-header';
-						var postTitle = document.createElement('span');
-						postTitle.className = 'post-title';
-						var postDate = document.createElement('span');
-						postDate.className = 'post-date';
-						var postBody = document.createElement('div');
-						postBody.className = 'post-body';
-
-						postTitle.innerHTML = updates[post].title;
-
-						// Format Date
-						var date = post;
-						date = post.slice(0,2) + '/' + post.slice(2, 4) + '/' + post.slice(4, 6);
-
-						postDate.innerHTML = date;
-
-						postBody.innerHTML = updates[post].content;
-
-						// Add the title and date to the header
-						postHeader.appendChild(postTitle);
-						postHeader.appendChild(postDate);
-
-						// Add all the pieces to the article
-						article.appendChild(postHeader);
-						article.appendChild(postBody);
-
-						updatesContainer.appendChild(article);
-					}
-
-				});
-			};
-
-			updatesObj.iterateHeroSlider = function() {
-				updatesObj.heroImg.src = updatesObj.imgs[updatesObj.currentIndex].src;
-				updatesObj.heroLink.href = updatesObj.imgs[updatesObj.currentIndex].link;
-				updatesObj.heroDescription.innerHTML = updatesObj.imgs[updatesObj.currentIndex].description;
-
-				for(var i=0; i<updatesObj.imgs.length; i++) {
-					if(updatesObj.featuredItem[i].className.search('white-out') < 0) {
-						updatesObj.featuredItem[i].className += ' white-out';
-					}
-				}
-
-				updatesObj.featuredItem[updatesObj.currentIndex].className = updatesObj.featuredItem[updatesObj.currentIndex].className.replace(' white-out', '');
-
-				// If the current index is about to go beyond the array, reset it back to zero
-				if(updatesObj.currentIndex === 2) {
-					updatesObj.currentIndex = 0;
-				} else {
-					updatesObj.currentIndex++;
-				}
-			}
-
-			updatesObj.start = function() {
-				this.iterateHeroSlider();
-
-				setInterval(this.iterateHeroSlider, 4000);
-
-				this.showUpdates();
-			};
-
 			updatesObj.start();
 		</script>
 	</body>

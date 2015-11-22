@@ -1,8 +1,12 @@
 /*****
 "Shadowrun Map" by Isabeau Kisler
-Application shows zones and map markers from the roleplaying game, Shadowrun 2050.
+Website for a personal Shadowrun 2050 Game.
 
-New information can be added to the database through add.html.
+Includes:
+-- Maps page that shows zones and map markers from the game.
+-- New map information can be added through add.html
+-- Characters page that show character information
+-- Runs page that details in-game adventures
 
 Project created for a personal Shadowrun game, using Firebase and Google Maps API.
 
@@ -15,8 +19,220 @@ var firebaseRef = {
 	main: new Firebase('https://blistering-torch-7640.firebaseio.com/')
 };
 
-var mapObj = {};
+/***** INDEX.HTML *****/
+/***** Manages updates and the hero slider *****/
+var updatesObj = {};
+updatesObj.imgs = [
+	{
+		src: 'img/screenshots/bios.jpg',
+		description: 'About the Characters',
+		link: 'bios.html'
+	},
+	{
+		src: 'img/screenshots/map.jpg',
+		description: 'Seattle Map',
+		link: 'map.html'
+	},
+	{
+		src: 'img/screenshots/runs.jpg',
+		description: 'Runs',
+		link: 'runs.html'
+	}
+];
+updatesObj.heroImg = document.getElementsByClassName('hero-img')[0];
+updatesObj.heroLink = document.getElementsByClassName('hero-link')[0];
+updatesObj.heroDescription = document.getElementsByClassName('hero-description')[0];
+updatesObj.featuredItem = document.getElementsByClassName('featured-item');
+updatesObj.currentIndex = 0; // Keeps track of which image is being shown in the Hero section
 
+updatesObj.showUpdates = function() {
+	var updatesContainer = document.getElementsByClassName('updates-container')[0];
+
+	firebaseRef.main.child('updates').on('value', function(snapshot) {
+		var updates = snapshot.val(); // Raw data from the Firebase
+
+		while(updatesContainer.childNodes[2]) {
+			updatesContainer.removeChild(updatesContainer.childNodes[2]);
+		}
+
+		for(post in updates) {
+			var article = document.createElement('article');
+			var postHeader = document.createElement('div');
+			postHeader.className = 'post-header';
+			var postTitle = document.createElement('span');
+			postTitle.className = 'post-title';
+			var postDate = document.createElement('span');
+			postDate.className = 'post-date';
+			var postBody = document.createElement('div');
+			postBody.className = 'post-body';
+
+			postTitle.innerHTML = updates[post].title;
+
+			// Format Date
+			var date = post;
+			date = post.slice(0,2) + '/' + post.slice(2, 4) + '/' + post.slice(4, 6);
+
+			postDate.innerHTML = date;
+
+			postBody.innerHTML = updates[post].content;
+
+			// Add the title and date to the header
+			postHeader.appendChild(postTitle);
+			postHeader.appendChild(postDate);
+
+			// Add all the pieces to the article
+			article.appendChild(postHeader);
+			article.appendChild(postBody);
+
+			updatesContainer.insertBefore(article, updatesContainer.childNodes[2]);
+		}
+
+	});
+};
+
+updatesObj.iterateHeroSlider = function() {
+	updatesObj.heroImg.src = updatesObj.imgs[updatesObj.currentIndex].src;
+	updatesObj.heroLink.href = updatesObj.imgs[updatesObj.currentIndex].link;
+	updatesObj.heroDescription.innerHTML = updatesObj.imgs[updatesObj.currentIndex].description;
+
+	for(var i=0; i<updatesObj.imgs.length; i++) {
+		if(updatesObj.featuredItem[i].className.search('white-out') < 0) {
+			updatesObj.featuredItem[i].className += ' white-out';
+		}
+	}
+
+	updatesObj.featuredItem[updatesObj.currentIndex].className = updatesObj.featuredItem[updatesObj.currentIndex].className.replace(' white-out', '');
+
+	// If the current index is about to go beyond the array, reset it back to zero
+	if(updatesObj.currentIndex === 2) {
+		updatesObj.currentIndex = 0;
+	} else {
+		updatesObj.currentIndex++;
+	}
+}
+
+updatesObj.start = function() {
+	this.iterateHeroSlider();
+
+	setInterval(this.iterateHeroSlider, 4000);
+
+	this.showUpdates();
+};
+
+
+/***** RUNS.HTML *****/
+/***** Manages the display of runs completed *****/
+var runsObj = {};
+
+runsObj.showRuns = function() {
+	var runsContainer = document.getElementsByClassName('runs-container')[0];
+
+	firebaseRef.main.child('runs').on('value', function(snapshot) {
+		var runs = snapshot.val(); // Raw data from the Firebase
+
+		while(runsContainer.childNodes[2]) {
+			runsContainer.removeChild(runsContainer.childNodes[2]);
+		}
+
+		for(post in runs) {
+			var article = document.createElement('article');
+			var postHeader = document.createElement('div');
+			postHeader.className = 'post-header';
+			var postTitle = document.createElement('span');
+			postTitle.className = 'post-title';
+			var postDate = document.createElement('span');
+			postDate.className = 'post-date';
+			var postBody = document.createElement('div');
+			postBody.className = 'post-body';
+
+			postTitle.innerHTML = runs[post].title;
+
+			// Format Date
+			var date = post;
+			date = post.slice(0,2) + '/' + post.slice(2, 4) + '/' + post.slice(4, 6);
+
+			postDate.innerHTML = date;
+
+			postBody.innerHTML = runs[post].content;
+
+			// Add the title and date to the header
+			postHeader.appendChild(postTitle);
+			postHeader.appendChild(postDate);
+
+			// Add all the pieces to the article
+			article.appendChild(postHeader);
+			article.appendChild(postBody);
+
+			runsContainer.insertBefore(article, runsContainer.childNodes[2]);
+		}
+
+	});
+};
+
+
+/***** BIOS.HTML *****/
+/***** Manages the character bios *****/
+var biosObj = {};
+biosObj.start = function() {
+	var main = document.getElementsByTagName('main')[0];
+
+	/***** Error Handling *****/
+	// If the browser can't cannot to the Firebase in five seconds, create and show an error message
+	cannotConnect = setTimeout(function(){
+		var errorMessage = document.createElement('div');
+		errorMessage.className = 'error-message';
+		var message = document.createTextNode('An error has occured.  Please check your internet connection or try again later.');
+		errorMessage.appendChild(message);
+		main.appendChild(errorMessage);
+
+	}, 5000);
+
+	// When the Firebase for the Characters is loaded, do all the things
+	firebaseRef.main.child('characters').orderByChild('name').on('value', function(snapshot) {
+
+		var characters = snapshot.val(); // Raw data from the Firebase
+
+		// Clear the timeout for the error message
+		clearTimeout(cannotConnect);
+
+		// If the character information exists on the page already, remove it
+		while(main.firstChild) {
+			main.removeChild(main.firstChild);
+		}
+
+		for(var characterName in characters) {
+			var bio = document.createElement('div');
+			bio.className = 'bio';
+			var bioPortrait = document.createElement('figure');
+			bioPortrait.className = 'bio-portrait';
+			var bioPic = document.createElement('img');
+			bioPic.className = 'bio-pic';
+			var bioName = document.createElement('figcaption');
+			bioName.className = 'bio-name';
+			var bioDescription = document.createElement('div');
+			bioDescription.className = 'bio-description';
+
+			bioName.innerHTML = characterName;
+			bioPic.src = characters[characterName].img;
+			bioPic.alt = characterName + "'s pic";
+
+			bioPortrait.appendChild(bioPic);
+			bioPortrait.appendChild(bioName);
+
+			bioDescription.innerHTML = characters[characterName].description;
+
+			bio.appendChild(bioPortrait);
+			bio.appendChild(bioDescription);
+
+			main.appendChild(bio);
+		}
+	});
+};
+
+
+/***** MAP.HTML *****/
+/***** Manages the map *****/
+var mapObj = {};
 mapObj.start = function() {
 	/***** Error Handling *****/
 	// If the browser can't cannot to the Firebase in five seconds, create and show an error message
@@ -228,4 +444,416 @@ mapObj.createMapKey = function(locations) {
 	main[0].appendChild(keyContainer);
 };
 
-mapObj.start();
+
+/***** ADD.HTML *****/
+/***** Manages error messages *****/
+var errorsObj = {};
+errorsObj.showErrorMessage = function(error) {
+	// Remove any old errors
+	this.removeOldErrors();
+
+	var errorMessageContainer = document.getElementsByClassName('error-message-container')[0];
+	errorMessageContainer.value = '';
+
+	var errorMessage = document.createElement('li');
+	errorMessage.className = 'error-message';
+	var message = document.createTextNode(error);
+
+	errorMessageContainer.className = errorMessageContainer.className.replace('invisible', '');
+
+	errorMessage.appendChild(message);
+	errorMessageContainer.appendChild(errorMessage);
+
+};
+
+errorsObj.removeOldErrors = function() {
+	var errorMessageContainer = document.getElementsByClassName('error-message-container')[0];
+
+	while(errorMessageContainer.firstChild) {
+		errorMessageContainer.removeChild(errorMessageContainer.firstChild);
+	}
+}
+
+/***** Manages setting up the buttons and loggin in *****/
+var loginObj = Object.create(errorsObj);
+
+loginObj.setUpButtons = function() {
+	this.goHome = document.getElementById('go-home');
+	this.loginButton = document.getElementById('login');
+	this.addZonesButton = document.getElementById('add-zones');
+	this.addMarkersButton = document.getElementById('add-markers');
+	this.currentZonesButton = document.getElementById('current-zones');
+	this.currentMarkersButton = document.getElementById('current-markers');
+
+	// Send the user back to the map page
+	this.goHome.addEventListener('click', function() {
+		location.href='map.html';
+	});
+
+	this.loginButton.addEventListener('click', loginObj.login);
+	this.addZonesButton.addEventListener('click', loginObj.loginFirst);
+	this.addMarkersButton.addEventListener('click', loginObj.loginFirst);
+
+	// Disable the buttons until the Firebase has time to load
+	this.currentZonesButton.disabled = true;
+	this.currentMarkersButton.disabled = true;
+
+	setTimeout(function(){
+		loginObj.currentZonesButton.disabled = false;
+		loginObj.currentMarkersButton.disabled = false;
+	}, 2000);
+
+	this.currentZonesButton.addEventListener('click', addZonesObj.currentZonesToggle);
+	this.currentMarkersButton.addEventListener('click', addMarkersObj.currentMarkersToggle);
+};
+
+/***** Tell the user to login first to add new information *****/
+loginObj.loginFirst = function() {
+	loginObj.showErrorMessage('Please log in first.');
+};
+
+/***** Login Users *****/
+loginObj.login = function() {
+	firebaseRef.main.authWithOAuthPopup("google", function(error, authData) {
+		if (error) {
+			if (error.code === "TRANSPORT_UNAVAILABLE") {
+				firebaseRef.main.authWithOAuthRedirect("google", function(error) {
+					loginObj.showErrorMessage('Login failed!  Check your internet connection and try again');
+				});
+			} else {
+				loginObj.showErrorMessage('Login failed!  Check your internet connection and try again');
+			}
+		} else {
+			// If successful:
+			// Remove any error messages
+			loginObj.removeOldErrors();
+
+			// Remove loginFirst messages
+			loginObj.addZonesButton.removeEventListener('click', loginObj.loginFirst);
+			loginObj.addMarkersButton.removeEventListener('click', loginObj.loginFirst);
+
+			// Hide the login button
+			loginObj.loginButton.className += ' invisible';
+
+			// Add addNew functions
+			loginObj.addZonesButton.addEventListener('click', addZonesObj.addNewZone);
+			loginObj.addMarkersButton.addEventListener('click', addMarkersObj.addNewMarker);
+
+			// Show a message saying that login was successful
+			loginObj.showErrorMessage('Login successful');
+		}
+	});
+};
+
+/***** Helps manage adding information to the page *****/
+var addInfo = Object.create(errorsObj);
+addInfo.setUpFirebase = function(child) {
+	var ref = firebaseRef.main.child(child);
+	var arrObjs = [];
+	
+	ref.orderByChild('name').on('value', function(snapshot) {
+		var rawData = snapshot.val(); // Raw data from the Firebase
+
+		// Move the objects into an array
+		for(var index in rawData) {
+			var attr = rawData[index];
+			arrObjs.push(attr);
+		}
+	});
+
+	return arrObjs;
+}
+
+/***** Remove the selected information from the page *****/
+addInfo.removeInfo = function(infoContainer, infoHeader) {
+	var main = document.getElementsByTagName('main')[0];
+	var old = document.getElementsByClassName(infoContainer);
+	var oldInfoHeading = document.getElementsByClassName(infoHeader);
+	
+	// If the info-container-zones div exists on the page, remove it and it's heading.
+	if(old.length > 0) {
+		main.removeChild(oldInfoHeading[0]);
+		main.removeChild(old[0]);
+		// Info-container was removed
+		return true;
+	} else {
+		// info-container didn't exist
+		return false;
+	}
+};
+
+/***** Manages the zone boundaries *****/
+var addZonesObj = Object.create(addInfo);
+addZonesObj.locationsObjs = addZonesObj.setUpFirebase('zones');
+
+/***** Toggles the display of current zone information *****/
+addZonesObj.currentZonesToggle = function() {
+	// If the info-container exists, delete it.
+	// otherwise, display it.
+	if(!addZonesObj.removeInfo('info-container-zones', 'info-container-zones-heading')) {
+		addZonesObj.displayBoundaryInfo();
+	}
+};
+
+/***** Display current zones information *****/
+addZonesObj.displayBoundaryInfo = function() {
+	// Get the main element
+	var main = document.getElementsByTagName('main')[0];
+
+	// If the info container already exists on the page, destroy it
+	// This is in case the Firebase is updated while someone is looking at it
+	addZonesObj.removeInfo('info-container-zones', 'info-container-zones-heading');
+
+	var infoContainer = document.createElement('div');
+	infoContainer.className = 'info-container-zones';
+
+	var currentInfo = document.createElement('h2');
+	var infoHeading = document.createTextNode('Current Zones Information');
+	currentInfo.className = 'info-container-zones-heading';
+	currentInfo.appendChild(infoHeading);
+
+	var tempDiv;
+	var tempColorDiv;
+	var tempColor;
+	var tempNameDiv;
+	var tempName;
+	var tempBoundariesDiv;
+	var tempBoundaries;
+
+	for(var i=0; i<addZonesObj.locationsObjs.length; i++) {
+		tempDiv = document.createElement('div');
+		tempDiv.className = 'location-item';
+
+		tempColorDiv = document.createElement('div');
+		tempColor = document.createTextNode(addZonesObj.locationsObjs[i].color);
+		tempColorDiv.appendChild(tempColor);
+		tempColorDiv.className = 'zone-color line-item';
+
+		tempNameDiv = document.createElement('div');
+		tempName = document.createTextNode(addZonesObj.locationsObjs[i].name);
+		tempNameDiv.appendChild(tempName);
+		tempNameDiv.className = 'zone-name line-item';
+
+		tempBoundariesDiv = document.createElement('div');
+		tempBoundaries = document.createTextNode(addZonesObj.locationsObjs[i].boundaries);
+		tempBoundariesDiv.appendChild(tempBoundaries);
+		tempBoundariesDiv.className = 'zone-boundaries';
+
+		tempDiv.appendChild(tempNameDiv);
+		tempDiv.appendChild(tempColorDiv);
+		tempDiv.appendChild(tempBoundariesDiv);
+
+		infoContainer.appendChild(tempDiv);
+	}
+
+	main.appendChild(currentInfo);
+	main.appendChild(infoContainer);
+};
+
+/***** Add new zone to Firebase *****/
+addZonesObj.addNewZone = function() {
+	// ValidateZone returns false if the new information was NOT valid.
+	// So here, we leave the function if it returns false.
+	if(!addZonesObj.validateZone()) {
+		return false;
+	}
+
+	// Remove any old errors
+	addZonesObj.removeOldErrors();
+
+	// Get the contents of the input boxes
+	var newName = document.getElementsByClassName('add-item-name')[0];
+	var newColor = document.getElementsByClassName('add-item-color')[0];
+	var newBoundaries = document.getElementsByClassName('add-item-boundaries')[0];
+	var zonesRef = firebaseRef.main.child('zones'); // The zones section of the Firebase
+
+	// Push a new zone into the Firebase
+	var newBoundary = zonesRef.push();
+	newBoundary.set({
+		'name': newName.value,
+		'color': newColor.value,
+		'boundaries': newBoundaries.value
+	}, function(error){ // If information isn't added to the Firebase, show an error
+		if(error) {
+			addZonesObj.showErrorMessage('New zone not added.  Error: ' + error);
+		} else {
+			addZonesObj.showErrorMessage('New zone added');
+		}
+	});
+
+	// Reset the input boxes back to empty
+	newName.value = '';
+	newColor.value = '';
+	newBoundaries.value = '';
+};
+
+/**** Validation *****/
+addZonesObj.validateZone = function() {
+	var newName = document.getElementsByClassName('add-item-name')[0].value;
+	var newColor = document.getElementsByClassName('add-item-color')[0].value;
+	var newBoundaries = document.getElementsByClassName('add-item-boundaries')[0].value;
+	var valid = true;
+
+	// Name can be anything, I don't care
+	if(newName.length === 0) {
+		addZonesObj.showErrorMessage('Enter name');
+		valid = false;
+	}
+
+	// Hex Colors
+	if(newColor.search(/#([a-f]|[A-F]|[0-9]){3}(([a-f]|[A-F]|[0-9]){3})?\b/) < 0) {
+		addZonesObj.showErrorMessage('Enter a hex value, in this format: #000000 or #000');
+		valid = false;
+
+	}
+	// Boundaries
+	if(newBoundaries.search(/{"lat": -?([0-9]){1,}.([0-9]){1,}, "lng": -?([0-9]){1,}.([0-9]){1,}},./) < 0) {
+		addZonesObj.showErrorMessage('Enter valid boundaries in the correct format');
+		valid = false;
+	}
+	// If anything is invalid, leave the function
+	if(!valid) {
+		return false;
+	}
+
+	return true;
+};
+
+/***** Manages the markers *****/
+var addMarkersObj = Object.create(addInfo);
+addMarkersObj.markerObjs = addMarkersObj.setUpFirebase('markers');
+
+/***** Toggles the display of current marker information *****/
+addMarkersObj.currentMarkersToggle = function() {
+	// If the info-container exists, delete it.
+	// otherwise, display it.
+	//if(!removeMarkerInfo()) {
+	if(!addMarkersObj.removeInfo('info-container-markers', 'info-container-markers-heading')) {
+		addMarkersObj.displayMarkerInfo();
+	}
+};
+
+/***** Display current markers information *****/
+addMarkersObj.displayMarkerInfo = function() {
+	// Get the main element
+	var main = document.getElementsByTagName('main')[0];
+
+	// If the info container already exists on the page, destroy it
+	// This is in case the Firebase is updated while someone is looking at it
+	addMarkersObj.removeInfo('info-container-markers', 'info-container-markers-heading');
+
+	var infoContainer = document.createElement('div');
+	infoContainer.className = 'info-container-markers';
+
+	var currentInfo = document.createElement('h2');
+	var infoHeading = document.createTextNode('Current Marker Information');
+	currentInfo.className = 'info-container-markers-heading';
+	currentInfo.appendChild(infoHeading);
+
+	var tempDiv;
+	var tempLatDiv;
+	var tempLat;
+	var tempLngDiv;
+	var tempLng;
+	var tempNameDiv;
+	var tempName;
+
+	for(var i=0; i<addMarkersObj.markerObjs.length; i++) {
+		tempDiv = document.createElement('div');
+		tempDiv.className = 'location-item';
+
+		tempNameDiv = document.createElement('div');
+		tempName = document.createTextNode(addMarkersObj.markerObjs[i].name);
+		tempNameDiv.appendChild(tempName);
+		tempNameDiv.className = 'marker-name line-item';
+
+		tempLatDiv = document.createElement('div');
+		tempLat = document.createTextNode(addMarkersObj.markerObjs[i].lat);
+		tempLatDiv.appendChild(tempLat);
+		tempLatDiv.className = 'marker-lat line-item';
+
+		tempLngDiv = document.createElement('div');
+		tempLng = document.createTextNode(addMarkersObj.markerObjs[i].lng);
+		tempLngDiv.appendChild(tempLng);
+		tempLngDiv.className = 'marker-lng line-item';
+
+		tempDiv.appendChild(tempNameDiv);
+		tempDiv.appendChild(tempLatDiv);
+		tempDiv.appendChild(tempLngDiv);
+
+		infoContainer.appendChild(tempDiv);
+	}
+
+	main.appendChild(currentInfo);
+	main.appendChild(infoContainer);
+};
+
+/***** Add new marker to Firebase *****/
+addMarkersObj.addNewMarker = function() {
+	// ValidateMarker returns false if the new information was NOT valid.
+	// So here, we leave the function if it returns false.
+	if(!addMarkersObj.validateMarker()) {
+		return false;
+	}
+
+	// Remove any old errors
+	addMarkersObj.removeOldErrors();
+
+	// Get the contents of the input boxes
+	var newName = document.getElementsByClassName('add-item-marker-name')[0];
+	var newLat = document.getElementsByClassName('add-item-marker-lat')[0];
+	var newLng = document.getElementsByClassName('add-item-marker-lng')[0];
+	var markersRef = firebaseRef.main.child('markers'); // The markers section of the Firebase
+
+	// Push a new marker into the Firebase
+	var newMarker = markersRef.push();
+	newMarker.set({
+		'name': newName.value,
+		'lat': newLat.value,
+		'lng': newLng.value
+	}, function(error){ // If information isn't added to the Firebase, show an error
+		if(error) {
+			addMarkersObj.showErrorMessage('New marker not added.  Error: ' + error);
+		} else {
+			addMarkersObj.showErrorMessage('New marker added');
+		}
+	});
+
+	// Reset the input boxes back to empty
+	newName.value = '';
+	newLat.value = '';
+	newLng.value = '';
+};
+
+/**** Validation *****/
+addMarkersObj.validateMarker = function() {
+	var newName = document.getElementsByClassName('add-item-marker-name')[0].value;
+	var newLat = document.getElementsByClassName('add-item-marker-lat')[0].value;
+	var newLng = document.getElementsByClassName('add-item-marker-lng')[0].value;
+	var valid = true;
+
+	// Name can be anything, I don't care
+	if(newName.length === 0) {
+		addMarkersObj.showErrorMessage('Enter name');
+		valid = false;
+	}
+
+	// Lat and Lng are both doubles
+	if(newLat.search(/-?(?:\d*\.)?\d+/) < 0) {
+		addMarkersObj.showErrorMessage('Enter a valid latitude');
+		valid = false;
+
+	}
+
+	if(newLng.search(/-?(?:\d*\.)?\d+/) < 0) {
+		addMarkersObj.showErrorMessage('Enter a valid longitude');
+		valid = false;
+	}
+	// If anything is invalid, leave the function
+	if(!valid) {
+		return false;
+	}
+
+	return true;
+};
+

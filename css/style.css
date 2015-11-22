@@ -84,10 +84,12 @@ nav a {
 
 .hero {
 	position: relative;
+	background-color: #000;
 }
 
-.hero img {
+.hero-img {
 	max-width: 550px;
+	opacity: 0.8;
 }
 
 .featured-list {
@@ -133,8 +135,9 @@ nav a {
 	opacity: 0.4;
 }
 
-/***** Updates *****/
-.updates-container {
+/***** Updates and Runs *****/
+.updates-container,
+.runs-container {
 	max-width: 800px;
 	margin: 0 auto;
 }
