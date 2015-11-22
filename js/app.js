@@ -84,7 +84,7 @@ updatesObj.showUpdates = function() {
 			article.appendChild(postHeader);
 			article.appendChild(postBody);
 
-			updatesContainer.appendChild(article);
+			updatesContainer.insertBefore(article, updatesContainer.childNodes[2]);
 		}
 
 	});
@@ -117,6 +117,56 @@ updatesObj.start = function() {
 	setInterval(this.iterateHeroSlider, 4000);
 
 	this.showUpdates();
+};
+
+
+/***** RUNS.HTML *****/
+/***** Manages the display of runs completed *****/
+var runsObj = {};
+
+runsObj.showRuns = function() {
+	var runsContainer = document.getElementsByClassName('runs-container')[0];
+
+	firebaseRef.main.child('runs').on('value', function(snapshot) {
+		var runs = snapshot.val(); // Raw data from the Firebase
+
+		while(runsContainer.childNodes[2]) {
+			runsContainer.removeChild(runsContainer.childNodes[2]);
+		}
+
+		for(post in runs) {
+			var article = document.createElement('article');
+			var postHeader = document.createElement('div');
+			postHeader.className = 'post-header';
+			var postTitle = document.createElement('span');
+			postTitle.className = 'post-title';
+			var postDate = document.createElement('span');
+			postDate.className = 'post-date';
+			var postBody = document.createElement('div');
+			postBody.className = 'post-body';
+
+			postTitle.innerHTML = runs[post].title;
+
+			// Format Date
+			var date = post;
+			date = post.slice(0,2) + '/' + post.slice(2, 4) + '/' + post.slice(4, 6);
+
+			postDate.innerHTML = date;
+
+			postBody.innerHTML = runs[post].content;
+
+			// Add the title and date to the header
+			postHeader.appendChild(postTitle);
+			postHeader.appendChild(postDate);
+
+			// Add all the pieces to the article
+			article.appendChild(postHeader);
+			article.appendChild(postBody);
+
+			runsContainer.insertBefore(article, runsContainer.childNodes[2]);
+		}
+
+	});
 };
 
 

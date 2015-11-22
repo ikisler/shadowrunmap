@@ -133,8 +133,9 @@ nav a {
 	opacity: 0.4;
 }
 
-/***** Updates *****/
-.updates-container {
+/***** Updates and Runs *****/
+.updates-container,
+.runs-container {
 	max-width: 800px;
 	margin: 0 auto;
 }
