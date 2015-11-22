@@ -84,10 +84,12 @@ nav a {
 
 .hero {
 	position: relative;
+	background-color: #000;
 }
 
-.hero img {
+.hero-img {
 	max-width: 550px;
+	opacity: 0.8;
 }
 
 .featured-list {

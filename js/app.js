@@ -29,12 +29,12 @@ updatesObj.imgs = [
 		link: 'bios.html'
 	},
 	{
-		src: 'img/screenshots/bios.jpg',
+		src: 'img/screenshots/map.jpg',
 		description: 'Seattle Map',
 		link: 'map.html'
 	},
 	{
-		src: 'img/screenshots/bios.jpg',
+		src: 'img/screenshots/runs.jpg',
 		description: 'Runs',
 		link: 'runs.html'
 	}
