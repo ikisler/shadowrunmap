@@ -283,13 +283,15 @@ mapObj.start = function() {
 		var latlng;
 
 		for(var i=0; i<rawData.length; i++) {
-			latlng = {lat: rawData[i].lat, lng: rawData[i].lng};
+			if(rawData[i]) {
+				latlng = {lat: rawData[i].lat, lng: rawData[i].lng};
 
-			marker = new google.maps.Marker({
-				position: latlng,
-				map: map,
-				title: rawData[i].name
-			});
+				marker = new google.maps.Marker({
+					position: latlng,
+					map: map,
+					title: rawData[i].name
+				});
+			}
 		}
 
 	});
