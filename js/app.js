@@ -282,6 +282,20 @@ mapObj.start = function() {
 		var marker;
 		var latlng;
 
+		for(place in rawData) {
+			if(rawData[place]) {
+				latlng = {lat: rawData[place].lat, lng: rawData[place].lng};
+
+				marker = new google.maps.Marker({
+					position: latlng,
+					map: map,
+					title: rawData[place].name
+				});
+			}
+		}
+
+		/* Does not work:
+
 		for(var i=0; i<rawData.length; i++) {
 			if(rawData[i]) {
 				latlng = {lat: rawData[i].lat, lng: rawData[i].lng};
@@ -293,6 +307,7 @@ mapObj.start = function() {
 				});
 			}
 		}
+		*/
 
 	});
 };
@@ -729,7 +744,6 @@ addMarkersObj.markerObjs = addMarkersObj.setUpFirebase('markers');
 addMarkersObj.currentMarkersToggle = function() {
 	// If the info-container exists, delete it.
 	// otherwise, display it.
-	//if(!removeMarkerInfo()) {
 	if(!addMarkersObj.removeInfo('info-container-markers', 'info-container-markers-heading')) {
 		addMarkersObj.displayMarkerInfo();
 	}
@@ -811,8 +825,8 @@ addMarkersObj.addNewMarker = function() {
 	var newMarker = markersRef.push();
 	newMarker.set({
 		'name': newName.value,
-		'lat': newLat.value,
-		'lng': newLng.value
+		'lat': parseFloat(newLat.value),
+		'lng': parseFloat(newLng.value)
 	}, function(error){ // If information isn't added to the Firebase, show an error
 		if(error) {
 			addMarkersObj.showErrorMessage('New marker not added.  Error: ' + error);
