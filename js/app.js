@@ -95,12 +95,14 @@ updatesObj.iterateHeroSlider = function() {
 	updatesObj.heroLink.href = updatesObj.imgs[updatesObj.currentIndex].link;
 	updatesObj.heroDescription.innerHTML = updatesObj.imgs[updatesObj.currentIndex].description;
 
+	// If a featured item does not have the white-out class, add it
 	for(var i=0; i<updatesObj.imgs.length; i++) {
 		if(updatesObj.featuredItem[i].className.search('white-out') < 0) {
 			updatesObj.featuredItem[i].className += ' white-out';
 		}
 	}
 
+	// Then remove the white-out class from the currently chosen featured item
 	updatesObj.featuredItem[updatesObj.currentIndex].className = updatesObj.featuredItem[updatesObj.currentIndex].className.replace(' white-out', '');
 
 	// If the current index is about to go beyond the array, reset it back to zero
@@ -111,12 +113,32 @@ updatesObj.iterateHeroSlider = function() {
 	}
 }
 
+// Users can change the featured item by mousing over the desired one
+updatesObj.changeFeaturedItem = function() {
+	updatesObj.featuredItem[0].addEventListener('mouseover', function(){
+		updatesObj.currentIndex = 0;
+		updatesObj.iterateHeroSlider();
+	});
+
+	updatesObj.featuredItem[1].addEventListener('mouseover', function(){
+		updatesObj.currentIndex = 1;
+		updatesObj.iterateHeroSlider();
+	});
+
+	updatesObj.featuredItem[2].addEventListener('mouseover', function(){
+		updatesObj.currentIndex = 2;
+		updatesObj.iterateHeroSlider();
+	});
+};
+
 updatesObj.start = function() {
 	this.iterateHeroSlider();
 
 	setInterval(this.iterateHeroSlider, 4000);
 
 	this.showUpdates();
+
+	this.changeFeaturedItem();
 };
 
 
