@@ -19,9 +19,57 @@ var firebaseRef = {
 	main: new Firebase('https://blistering-torch-7640.firebaseio.com/')
 };
 
+/***** Manages creating different posts for pages *****/
+var createPosts = {};
+
+// Create a text post
+createPosts.createTextPost = function() {
+	var article = document.createElement('article');
+	var postHeader = document.createElement('div');
+	postHeader.className = 'post-header';
+	var postTitle = document.createElement('span');
+	postTitle.className = 'post-title';
+	var postDate = document.createElement('span');
+	postDate.className = 'post-date';
+	var postBody = document.createElement('div');
+	postBody.className = 'post-body';
+
+	// Add the title and date to the header
+	postHeader.appendChild(postTitle);
+	postHeader.appendChild(postDate);
+
+	// Add all the pieces to the article
+	article.appendChild(postHeader);
+	article.appendChild(postBody);
+
+	return {article: article, title: postTitle, date: postDate, body: postBody};
+};
+
+// Create an image post
+createPosts.createImagePost = function() {
+	var bio = document.createElement('div');
+	bio.className = 'bio';
+	var bioPortrait = document.createElement('figure');
+	bioPortrait.className = 'bio-portrait';
+	var bioPic = document.createElement('img');
+	bioPic.className = 'bio-pic';
+	var bioName = document.createElement('figcaption');
+	bioName.className = 'bio-name';
+	var bioDescription = document.createElement('div');
+	bioDescription.className = 'bio-description';
+
+	bioPortrait.appendChild(bioPic);
+	bioPortrait.appendChild(bioName);
+
+	bio.appendChild(bioPortrait);
+	bio.appendChild(bioDescription);
+
+	return {article: bio, image: bioPic, caption: bioName, description: bioDescription};
+};
+
 /***** INDEX.HTML *****/
 /***** Manages updates and the hero slider *****/
-var updatesObj = {};
+var updatesObj = Object.create(createPosts);
 updatesObj.imgs = [
 	{
 		src: 'img/screenshots/bios.jpg',
@@ -45,33 +93,13 @@ updatesObj.heroDescription = document.getElementsByClassName('hero-description')
 updatesObj.featuredItem = document.getElementsByClassName('featured-item');
 updatesObj.currentIndex = 0; // Keeps track of which image is being shown in the Hero section
 
-updatesObj.createPost = function() {
-	var article = document.createElement('article');
-	var postHeader = document.createElement('div');
-	postHeader.className = 'post-header';
-	var postTitle = document.createElement('span');
-	postTitle.className = 'post-title';
-	var postDate = document.createElement('span');
-	postDate.className = 'post-date';
-	var postBody = document.createElement('div');
-	postBody.className = 'post-body';
-
-	// Add the title and date to the header
-	postHeader.appendChild(postTitle);
-	postHeader.appendChild(postDate);
-
-	// Add all the pieces to the article
-	article.appendChild(postHeader);
-	article.appendChild(postBody);
-
-	return {article: article, title: postTitle, date: postDate, body: postBody};
-};
-
 updatesObj.showUpdates = function() {
+	var that = this;
+
 	var updatesContainer = document.getElementsByClassName('updates-container')[0];
 
 	// Let the user know that there will be more content by loading a blank post first
-	var article = this.createPost();
+	var article = this.createTextPost();
 	updatesContainer.insertBefore(article.article, updatesContainer.childNodes[2]);
 
 	firebaseRef.main.child('updates').on('value', function(snapshot) {
@@ -82,7 +110,7 @@ updatesObj.showUpdates = function() {
 		}
 
 		for(post in updates) {
-			var newPost = updatesObj.createPost();
+			var newPost = that.createTextPost();
 			newPost.title.innerHTML = updates[post].title;
 
 			// Format Date
@@ -153,10 +181,15 @@ updatesObj.start = function() {
 
 /***** RUNS.HTML *****/
 /***** Manages the display of runs completed *****/
-var runsObj = {};
+var runsObj = Object.create(createPosts);
 
 runsObj.showRuns = function() {
+	var that = this;
 	var runsContainer = document.getElementsByClassName('runs-container')[0];
+
+	// Let the user know that there will be more content by loading a blank post first
+	var article = this.createTextPost();
+	runsContainer.insertBefore(article.article, runsContainer.childNodes[2]);
 
 	firebaseRef.main.child('runs').on('value', function(snapshot) {
 		var runs = snapshot.val(); // Raw data from the Firebase
@@ -166,35 +199,18 @@ runsObj.showRuns = function() {
 		}
 
 		for(post in runs) {
-			var article = document.createElement('article');
-			var postHeader = document.createElement('div');
-			postHeader.className = 'post-header';
-			var postTitle = document.createElement('span');
-			postTitle.className = 'post-title';
-			var postDate = document.createElement('span');
-			postDate.className = 'post-date';
-			var postBody = document.createElement('div');
-			postBody.className = 'post-body';
+			var newPost = that.createTextPost();
 
-			postTitle.innerHTML = runs[post].title;
-
+			newPost.title.innerHTML = runs[post].title;
 			// Format Date
 			var date = post;
 			date = post.slice(0,2) + '/' + post.slice(2, 4) + '/' + post.slice(4, 6);
 
-			postDate.innerHTML = date;
+			newPost.date.innerHTML = date;
 
-			postBody.innerHTML = runs[post].content;
+			newPost.body.innerHTML = runs[post].content;
 
-			// Add the title and date to the header
-			postHeader.appendChild(postTitle);
-			postHeader.appendChild(postDate);
-
-			// Add all the pieces to the article
-			article.appendChild(postHeader);
-			article.appendChild(postBody);
-
-			runsContainer.insertBefore(article, runsContainer.childNodes[2]);
+			runsContainer.insertBefore(newPost.article, runsContainer.childNodes[2]);
 		}
 
 	});
@@ -203,9 +219,14 @@ runsObj.showRuns = function() {
 
 /***** BIOS.HTML *****/
 /***** Manages the character bios *****/
-var biosObj = {};
+var biosObj = Object.create(createPosts);
 biosObj.start = function() {
+	var that = this;
+
 	var main = document.getElementsByTagName('main')[0];
+
+	var test = this.createImagePost();
+	main.appendChild(test.article);
 
 	/***** Error Handling *****/
 	// If the browser can't cannot to the Firebase in five seconds, create and show an error message
@@ -232,30 +253,15 @@ biosObj.start = function() {
 		}
 
 		for(var characterName in characters) {
-			var bio = document.createElement('div');
-			bio.className = 'bio';
-			var bioPortrait = document.createElement('figure');
-			bioPortrait.className = 'bio-portrait';
-			var bioPic = document.createElement('img');
-			bioPic.className = 'bio-pic';
-			var bioName = document.createElement('figcaption');
-			bioName.className = 'bio-name';
-			var bioDescription = document.createElement('div');
-			bioDescription.className = 'bio-description';
+			var bio = that.createImagePost();
 
-			bioName.innerHTML = characterName;
-			bioPic.src = characters[characterName].img;
-			bioPic.alt = characterName + "'s pic";
+			bio.caption.innerHTML = characterName;
+			bio.image.src = characters[characterName].img;
+			bio.image.alt = characterName + "'s pic";
 
-			bioPortrait.appendChild(bioPic);
-			bioPortrait.appendChild(bioName);
+			bio.description.innerHTML = characters[characterName].description;
 
-			bioDescription.innerHTML = characters[characterName].description;
-
-			bio.appendChild(bioPortrait);
-			bio.appendChild(bioDescription);
-
-			main.appendChild(bio);
+			main.appendChild(bio.article);
 		}
 	});
 };

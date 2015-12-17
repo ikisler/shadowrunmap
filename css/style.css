@@ -159,6 +159,10 @@ article {
 	padding-left: 20px;
 }
 
+.post-body {
+	min-height: 100px;
+}
+
 /***** Map Key *****/
 .key {
 	width: 15%;
@@ -413,6 +417,8 @@ h1 {
 }
 
 .bio-pic {
+	min-height: 100px;
+	min-width: 100px;
 	max-height: 220px;
 	max-width: 200px;
 }
