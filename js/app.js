@@ -45,8 +45,34 @@ updatesObj.heroDescription = document.getElementsByClassName('hero-description')
 updatesObj.featuredItem = document.getElementsByClassName('featured-item');
 updatesObj.currentIndex = 0; // Keeps track of which image is being shown in the Hero section
 
+updatesObj.createPost = function() {
+	var article = document.createElement('article');
+	var postHeader = document.createElement('div');
+	postHeader.className = 'post-header';
+	var postTitle = document.createElement('span');
+	postTitle.className = 'post-title';
+	var postDate = document.createElement('span');
+	postDate.className = 'post-date';
+	var postBody = document.createElement('div');
+	postBody.className = 'post-body';
+
+	// Add the title and date to the header
+	postHeader.appendChild(postTitle);
+	postHeader.appendChild(postDate);
+
+	// Add all the pieces to the article
+	article.appendChild(postHeader);
+	article.appendChild(postBody);
+
+	return {article: article, title: postTitle, date: postDate, body: postBody};
+};
+
 updatesObj.showUpdates = function() {
 	var updatesContainer = document.getElementsByClassName('updates-container')[0];
+
+	// Let the user know that there will be more content by loading a blank post first
+	var article = this.createPost();
+	updatesContainer.insertBefore(article.article, updatesContainer.childNodes[2]);
 
 	firebaseRef.main.child('updates').on('value', function(snapshot) {
 		var updates = snapshot.val(); // Raw data from the Firebase
@@ -56,35 +82,18 @@ updatesObj.showUpdates = function() {
 		}
 
 		for(post in updates) {
-			var article = document.createElement('article');
-			var postHeader = document.createElement('div');
-			postHeader.className = 'post-header';
-			var postTitle = document.createElement('span');
-			postTitle.className = 'post-title';
-			var postDate = document.createElement('span');
-			postDate.className = 'post-date';
-			var postBody = document.createElement('div');
-			postBody.className = 'post-body';
-
-			postTitle.innerHTML = updates[post].title;
+			var newPost = updatesObj.createPost();
+			newPost.title.innerHTML = updates[post].title;
 
 			// Format Date
 			var date = post;
 			date = post.slice(0,2) + '/' + post.slice(2, 4) + '/' + post.slice(4, 6);
 
-			postDate.innerHTML = date;
+			newPost.date.innerHTML = date;
 
-			postBody.innerHTML = updates[post].content;
+			newPost.body.innerHTML = updates[post].content;
 
-			// Add the title and date to the header
-			postHeader.appendChild(postTitle);
-			postHeader.appendChild(postDate);
-
-			// Add all the pieces to the article
-			article.appendChild(postHeader);
-			article.appendChild(postBody);
-
-			updatesContainer.insertBefore(article, updatesContainer.childNodes[2]);
+			updatesContainer.insertBefore(newPost.article, updatesContainer.childNodes[2]);
 		}
 
 	});
