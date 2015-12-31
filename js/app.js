@@ -325,9 +325,19 @@ mapObj.start = function() {
 
 				marker = new google.maps.Marker({
 					position: latlng,
-					map: map,
+					map: mapObj.map,
 					title: rawData[place].name
 				});
+
+				function helper(i) {
+					var infowindow =  new google.maps.InfoWindow({
+						content: i
+					});
+
+					return function() { infowindow.open(mapObj.map, this); };
+				}
+				marker.addListener('click', helper(rawData[place].name)
+				);
 			}
 		}
 
@@ -374,7 +384,7 @@ mapObj.createMap = function(boundaries, locations) {
 	};
 
 	// Get the map element
-	map = new google.maps.Map(document.getElementById('map-canvas'),
+	mapObj.map = new google.maps.Map(document.getElementById('map-canvas'),
 		 mapOptions);
 
 	// Create the polygon overlay using the passed boundary and location information
@@ -390,7 +400,7 @@ mapObj.createMap = function(boundaries, locations) {
 		});
 
 		// Add the polygon to the map
-		polygon.setMap(map);
+		polygon.setMap(mapObj.map);
 
 	}
 
@@ -401,12 +411,12 @@ mapObj.createMap = function(boundaries, locations) {
 		strokeOpacity: 1.0,
 		strokeWeight: 3
 	});
-	poly.setMap(map);
+	poly.setMap(mapObj.map);
 
 	// The textbox that holds the new boundary text
 	var newBoundariesText = document.getElementsByClassName('new-area-boundaries-text')[0];
 	
-	google.maps.event.addListener(map, 'click', function(event) {
+	google.maps.event.addListener(mapObj.map, 'click', function(event) {
 		//  If the new-area-boundaries checkbox is checked, add new boundary locations to the new-area-boundaries-text div
 		if(document.getElementsByClassName('new-area-boundaries-check')[0].checked) {
 			mapObj.path = poly.getPath();
