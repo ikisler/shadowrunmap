@@ -329,15 +329,14 @@ mapObj.start = function() {
 					title: rawData[place].name
 				});
 
-				function helper(i) {
+				function helper(name, description) {
 					var infowindow =  new google.maps.InfoWindow({
-						content: i
+						content: '<div class="infowindow-header">' + name + '</div><p class="infowindow-content">' + description + '</p>'
 					});
 
 					return function() { infowindow.open(mapObj.map, this); };
 				}
-				marker.addListener('click', helper(rawData[place].name)
-				);
+				marker.addListener('click', helper(rawData[place].name, rawData[place].description));
 			}
 		}
 

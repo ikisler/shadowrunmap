@@ -200,6 +200,28 @@ article {
 	float: left;
 }
 
+.infowindow-header, .infowindow-content {
+	padding: 7px;
+}
+
+.infowindow-header {
+	font-size: 1.2em;
+	color: #fff;
+	background-color: #548;
+	border-top-right-radius: 2px;
+	border-top-left-radius: 2px;
+}
+
+.infowindow-content {
+	font-size: 1.1em;
+	color: #fff;
+	background-color: #000;
+	margin: 0;
+	border-bottom-right-radius: 2px;
+	border-bottom-left-radius: 2px;
+
+}
+
 /***** Get New Boundaries *****/
 footer {
 	width: 20%;
