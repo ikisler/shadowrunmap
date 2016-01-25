@@ -336,7 +336,12 @@ mapObj.start = function() {
 
 					return function() { infowindow.open(mapObj.map, this); };
 				}
-				marker.addListener('click', helper(rawData[place].name, rawData[place].description));
+				// If there's a description, use that; otherwise, use a space
+				if(rawData[place].description) {
+					marker.addListener('click', helper(rawData[place].name, rawData[place].description));
+				} else {
+					marker.addListener('click', helper(rawData[place].name, ' '));
+				}
 			}
 		}
 
