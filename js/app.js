@@ -870,6 +870,7 @@ addMarkersObj.addNewMarker = function() {
 	var newName = document.getElementsByClassName('add-item-marker-name')[0];
 	var newLat = document.getElementsByClassName('add-item-marker-lat')[0];
 	var newLng = document.getElementsByClassName('add-item-marker-lng')[0];
+	var newDescription = document.getElementsByClassName('add-item-marker-description')[0];
 	var markersRef = firebaseRef.main.child('markers'); // The markers section of the Firebase
 
 	// Push a new marker into the Firebase
@@ -877,7 +878,8 @@ addMarkersObj.addNewMarker = function() {
 	newMarker.set({
 		'name': newName.value,
 		'lat': parseFloat(newLat.value),
-		'lng': parseFloat(newLng.value)
+		'lng': parseFloat(newLng.value),
+		'description': newDescription.value
 	}, function(error){ // If information isn't added to the Firebase, show an error
 		if(error) {
 			addMarkersObj.showErrorMessage('New marker not added.  Error: ' + error);
@@ -890,6 +892,7 @@ addMarkersObj.addNewMarker = function() {
 	newName.value = '';
 	newLat.value = '';
 	newLng.value = '';
+	newDescription.value = '';
 };
 
 /**** Validation *****/
