@@ -545,7 +545,7 @@ errorsObj.removeOldErrors = function() {
 /***** Manages setting up the buttons and loggin in *****/
 var loginObj = Object.create(errorsObj);
 
-loginObj.setUpButtons = function() {
+loginObj.start = function() {
 	this.goHome = document.getElementById('go-home');
 	this.loginButton = document.getElementById('login');
 	this.addZonesButton = document.getElementById('add-zones');
@@ -573,6 +573,9 @@ loginObj.setUpButtons = function() {
 
 	this.currentZonesButton.addEventListener('click', addZonesObj.currentZonesToggle);
 	this.currentMarkersButton.addEventListener('click', addMarkersObj.currentMarkersToggle);
+
+	// Track if a user is logged in or not
+	this.loggedIn = false;
 };
 
 /***** Tell the user to login first to add new information *****/
@@ -593,6 +596,8 @@ loginObj.login = function() {
 			}
 		} else {
 			// If successful:
+			loginObj.loggedIn = true;
+
 			// Remove any error messages
 			loginObj.removeOldErrors();
 
@@ -625,6 +630,7 @@ addInfo.setUpFirebase = function(child) {
 		// Move the objects into an array
 		for(var index in rawData) {
 			var attr = rawData[index];
+			attr.index = index;
 			arrObjs.push(attr);
 		}
 	});
@@ -824,6 +830,9 @@ addMarkersObj.displayMarkerInfo = function() {
 	var tempLng;
 	var tempNameDiv;
 	var tempName;
+	var tempDeleteDiv;
+	var tempDeleteSpan;
+	var tempDeleteText;
 
 	for(var i=0; i<addMarkersObj.markerObjs.length; i++) {
 		tempDiv = document.createElement('div');
@@ -847,6 +856,19 @@ addMarkersObj.displayMarkerInfo = function() {
 		tempDiv.appendChild(tempNameDiv);
 		tempDiv.appendChild(tempLatDiv);
 		tempDiv.appendChild(tempLngDiv);
+
+		if(loginObj.loggedIn) {
+			tempDeleteDiv = document.createElement('div');
+			tempDeleteSpan = document.createElement('span');
+			tempDeleteSpan.setAttribute('data-marker-name', addMarkersObj.markerObjs[i].index);
+			tempDeleteSpan.addEventListener('click', addMarkersObj.removeMarker(tempDeleteSpan, tempDeleteDiv));
+			tempDeleteText = document.createTextNode('X');
+			tempDeleteSpan.appendChild(tempDeleteText);
+			tempDeleteDiv.appendChild(tempDeleteSpan);
+			tempDeleteDiv.className = 'delete-marker line-item';
+
+			tempDiv.appendChild(tempDeleteDiv);
+		}
 
 		infoContainer.appendChild(tempDiv);
 	}
@@ -893,6 +915,42 @@ addMarkersObj.addNewMarker = function() {
 	newLat.value = '';
 	newLng.value = '';
 	newDescription.value = '';
+};
+
+/**** Remove Marker ****/
+addMarkersObj.removeMarker = function(marker, parent) {
+	return function() {
+		// If it's not already open, open the 'are you sure' dialog:
+		if(!parent.children[1]) {
+			var tempDiv = document.createElement('div');
+			var yesButton = document.createElement('button');
+			var noButton = document.createElement('button');
+			// If the user clicks 'no', remove the menu
+			noButton.addEventListener('click', function(e) {
+				e.target.parentNode.parentNode.removeChild(e.target.parentNode);
+			});
+			// If user clicks 'yes'
+			yesButton.addEventListener('click', function(e) {
+				firebaseRef.main.child('markers').child(e.target.parentNode.parentNode.children[0].dataset.markerName).remove(function() {
+					console.log('removed' + e.target.parentNode.parentNode.children[0].dataset.markerName);
+				});
+
+			});
+			var yesText = document.createTextNode('Yes');
+			var noText = document.createTextNode('No');
+			var sure = document.createTextNode('Are you sure?');
+
+			yesButton.appendChild(yesText);
+			noButton.appendChild(noText);
+
+			tempDiv.appendChild(sure);
+			tempDiv.appendChild(yesButton);
+			tempDiv.appendChild(noButton);
+
+			parent.appendChild(tempDiv);
+			console.log(marker.dataset.markerName);
+		}
+	}
 };
 
 /**** Validation *****/
