@@ -546,6 +546,9 @@ errorsObj.removeOldErrors = function() {
 var loginObj = Object.create(errorsObj);
 
 loginObj.start = function() {
+	// Set up markers
+	addMarkersObj.setup();
+
 	this.goHome = document.getElementById('go-home');
 	this.loginButton = document.getElementById('login');
 	this.addZonesButton = document.getElementById('add-zones');
@@ -587,6 +590,7 @@ loginObj.loginFirst = function() {
 loginObj.login = function() {
 	firebaseRef.main.authWithOAuthPopup("google", function(error, authData) {
 		if (error) {
+			/*** This needs to get fixed later.
 			if (error.code === "TRANSPORT_UNAVAILABLE") {
 				firebaseRef.main.authWithOAuthRedirect("google", function(error) {
 					loginObj.showErrorMessage('Login failed!  Check your internet connection and try again');
@@ -594,6 +598,8 @@ loginObj.login = function() {
 			} else {
 				loginObj.showErrorMessage('Login failed!  Check your internet connection and try again');
 			}
+			***/
+			loginObj.showErrorMessage('Login failed!  Check your internet connection and try again');
 		} else {
 			// If successful:
 			loginObj.loggedIn = true;
@@ -623,9 +629,10 @@ var addInfo = Object.create(errorsObj);
 addInfo.setUpFirebase = function(child) {
 	var ref = firebaseRef.main.child(child);
 	var arrObjs = [];
+	var rawData;
 	
 	ref.orderByChild('name').on('value', function(snapshot) {
-		var rawData = snapshot.val(); // Raw data from the Firebase
+		rawData = snapshot.val(); // Raw data from the Firebase
 
 		// Move the objects into an array
 		for(var index in rawData) {
@@ -633,6 +640,7 @@ addInfo.setUpFirebase = function(child) {
 			attr.index = index;
 			arrObjs.push(attr);
 		}
+		arrObjs = [];
 	});
 
 	return arrObjs;
@@ -795,7 +803,30 @@ addZonesObj.validateZone = function() {
 
 /***** Manages the markers *****/
 var addMarkersObj = Object.create(addInfo);
-addMarkersObj.markerObjs = addMarkersObj.setUpFirebase('markers');
+//addMarkersObj.markerObjs = addMarkersObj.setUpFirebase('markers');
+addMarkersObj.markerObjs;
+addMarkersObj.markerRef = firebaseRef.main.child('markers');
+addMarkersObj.arrObjs = [];
+addMarkersObj.rawData;
+
+addMarkersObj.setup = function() {
+	addMarkersObj.markerRef.orderByChild('name').on('value', function(snapshot) {
+		addMarkersObj.rawData = snapshot.val(); // Raw data from the Firebase
+
+		// Move the objects into an array
+		for(var index in addMarkersObj.rawData) {
+			var attr = addMarkersObj.rawData[index];
+			attr.index = index;
+			addMarkersObj.arrObjs.push(attr);
+		}
+
+		addMarkersObj.markerObjs = addMarkersObj.arrObjs;
+		addMarkersObj.arrObjs = [];
+	});
+};
+
+
+
 
 /***** Toggles the display of current marker information *****/
 addMarkersObj.currentMarkersToggle = function() {
@@ -907,6 +938,8 @@ addMarkersObj.addNewMarker = function() {
 			addMarkersObj.showErrorMessage('New marker not added.  Error: ' + error);
 		} else {
 			addMarkersObj.showErrorMessage('New marker added');
+			addMarkersObj.currentMarkersToggle();
+			addMarkersObj.currentMarkersToggle();
 		}
 	});
 
@@ -931,8 +964,14 @@ addMarkersObj.removeMarker = function(marker, parent) {
 			});
 			// If user clicks 'yes'
 			yesButton.addEventListener('click', function(e) {
-				firebaseRef.main.child('markers').child(e.target.parentNode.parentNode.children[0].dataset.markerName).remove(function() {
-					console.log('removed' + e.target.parentNode.parentNode.children[0].dataset.markerName);
+				firebaseRef.main.child('markers').child(e.target.parentNode.parentNode.children[0].dataset.markerName).remove(function(error) {
+					if(error) {
+						console.log('Error: ', error)
+					} else {
+						// Close and open the markers list
+						addMarkersObj.currentMarkersToggle();
+						addMarkersObj.currentMarkersToggle();
+					}
 				});
 
 			});
@@ -948,7 +987,6 @@ addMarkersObj.removeMarker = function(marker, parent) {
 			tempDiv.appendChild(noButton);
 
 			parent.appendChild(tempDiv);
-			console.log(marker.dataset.markerName);
 		}
 	}
 };
