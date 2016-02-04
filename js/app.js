@@ -545,7 +545,10 @@ errorsObj.removeOldErrors = function() {
 /***** Manages setting up the buttons and loggin in *****/
 var loginObj = Object.create(errorsObj);
 
-loginObj.setUpButtons = function() {
+loginObj.start = function() {
+	// Set up markers
+	addMarkersObj.setup();
+
 	this.goHome = document.getElementById('go-home');
 	this.loginButton = document.getElementById('login');
 	this.addZonesButton = document.getElementById('add-zones');
@@ -573,6 +576,9 @@ loginObj.setUpButtons = function() {
 
 	this.currentZonesButton.addEventListener('click', addZonesObj.currentZonesToggle);
 	this.currentMarkersButton.addEventListener('click', addMarkersObj.currentMarkersToggle);
+
+	// Track if a user is logged in or not
+	this.loggedIn = false;
 };
 
 /***** Tell the user to login first to add new information *****/
@@ -584,6 +590,7 @@ loginObj.loginFirst = function() {
 loginObj.login = function() {
 	firebaseRef.main.authWithOAuthPopup("google", function(error, authData) {
 		if (error) {
+			/*** This needs to get fixed later.
 			if (error.code === "TRANSPORT_UNAVAILABLE") {
 				firebaseRef.main.authWithOAuthRedirect("google", function(error) {
 					loginObj.showErrorMessage('Login failed!  Check your internet connection and try again');
@@ -591,8 +598,12 @@ loginObj.login = function() {
 			} else {
 				loginObj.showErrorMessage('Login failed!  Check your internet connection and try again');
 			}
+			***/
+			loginObj.showErrorMessage('Login failed!  Check your internet connection and try again');
 		} else {
 			// If successful:
+			loginObj.loggedIn = true;
+
 			// Remove any error messages
 			loginObj.removeOldErrors();
 
@@ -618,15 +629,18 @@ var addInfo = Object.create(errorsObj);
 addInfo.setUpFirebase = function(child) {
 	var ref = firebaseRef.main.child(child);
 	var arrObjs = [];
+	var rawData;
 	
 	ref.orderByChild('name').on('value', function(snapshot) {
-		var rawData = snapshot.val(); // Raw data from the Firebase
+		rawData = snapshot.val(); // Raw data from the Firebase
 
 		// Move the objects into an array
 		for(var index in rawData) {
 			var attr = rawData[index];
+			attr.index = index;
 			arrObjs.push(attr);
 		}
+		arrObjs = [];
 	});
 
 	return arrObjs;
@@ -789,7 +803,30 @@ addZonesObj.validateZone = function() {
 
 /***** Manages the markers *****/
 var addMarkersObj = Object.create(addInfo);
-addMarkersObj.markerObjs = addMarkersObj.setUpFirebase('markers');
+//addMarkersObj.markerObjs = addMarkersObj.setUpFirebase('markers');
+addMarkersObj.markerObjs;
+addMarkersObj.markerRef = firebaseRef.main.child('markers');
+addMarkersObj.arrObjs = [];
+addMarkersObj.rawData;
+
+addMarkersObj.setup = function() {
+	addMarkersObj.markerRef.orderByChild('name').on('value', function(snapshot) {
+		addMarkersObj.rawData = snapshot.val(); // Raw data from the Firebase
+
+		// Move the objects into an array
+		for(var index in addMarkersObj.rawData) {
+			var attr = addMarkersObj.rawData[index];
+			attr.index = index;
+			addMarkersObj.arrObjs.push(attr);
+		}
+
+		addMarkersObj.markerObjs = addMarkersObj.arrObjs;
+		addMarkersObj.arrObjs = [];
+	});
+};
+
+
+
 
 /***** Toggles the display of current marker information *****/
 addMarkersObj.currentMarkersToggle = function() {
@@ -824,6 +861,9 @@ addMarkersObj.displayMarkerInfo = function() {
 	var tempLng;
 	var tempNameDiv;
 	var tempName;
+	var tempDeleteDiv;
+	var tempDeleteSpan;
+	var tempDeleteText;
 
 	for(var i=0; i<addMarkersObj.markerObjs.length; i++) {
 		tempDiv = document.createElement('div');
@@ -847,6 +887,19 @@ addMarkersObj.displayMarkerInfo = function() {
 		tempDiv.appendChild(tempNameDiv);
 		tempDiv.appendChild(tempLatDiv);
 		tempDiv.appendChild(tempLngDiv);
+
+		if(loginObj.loggedIn) {
+			tempDeleteDiv = document.createElement('div');
+			tempDeleteSpan = document.createElement('span');
+			tempDeleteSpan.setAttribute('data-marker-name', addMarkersObj.markerObjs[i].index);
+			tempDeleteSpan.addEventListener('click', addMarkersObj.removeMarker(tempDeleteSpan, tempDeleteDiv));
+			tempDeleteText = document.createTextNode('X');
+			tempDeleteSpan.appendChild(tempDeleteText);
+			tempDeleteDiv.appendChild(tempDeleteSpan);
+			tempDeleteDiv.className = 'delete-marker line-item';
+
+			tempDiv.appendChild(tempDeleteDiv);
+		}
 
 		infoContainer.appendChild(tempDiv);
 	}
@@ -885,6 +938,8 @@ addMarkersObj.addNewMarker = function() {
 			addMarkersObj.showErrorMessage('New marker not added.  Error: ' + error);
 		} else {
 			addMarkersObj.showErrorMessage('New marker added');
+			addMarkersObj.currentMarkersToggle();
+			addMarkersObj.currentMarkersToggle();
 		}
 	});
 
@@ -893,6 +948,47 @@ addMarkersObj.addNewMarker = function() {
 	newLat.value = '';
 	newLng.value = '';
 	newDescription.value = '';
+};
+
+/**** Remove Marker ****/
+addMarkersObj.removeMarker = function(marker, parent) {
+	return function() {
+		// If it's not already open, open the 'are you sure' dialog:
+		if(!parent.children[1]) {
+			var tempDiv = document.createElement('div');
+			var yesButton = document.createElement('button');
+			var noButton = document.createElement('button');
+			// If the user clicks 'no', remove the menu
+			noButton.addEventListener('click', function(e) {
+				e.target.parentNode.parentNode.removeChild(e.target.parentNode);
+			});
+			// If user clicks 'yes'
+			yesButton.addEventListener('click', function(e) {
+				firebaseRef.main.child('markers').child(e.target.parentNode.parentNode.children[0].dataset.markerName).remove(function(error) {
+					if(error) {
+						console.log('Error: ', error)
+					} else {
+						// Close and open the markers list
+						addMarkersObj.currentMarkersToggle();
+						addMarkersObj.currentMarkersToggle();
+					}
+				});
+
+			});
+			var yesText = document.createTextNode('Yes');
+			var noText = document.createTextNode('No');
+			var sure = document.createTextNode('Are you sure?');
+
+			yesButton.appendChild(yesText);
+			noButton.appendChild(noText);
+
+			tempDiv.appendChild(sure);
+			tempDiv.appendChild(yesButton);
+			tempDiv.appendChild(noButton);
+
+			parent.appendChild(tempDiv);
+		}
+	}
 };
 
 /**** Validation *****/
